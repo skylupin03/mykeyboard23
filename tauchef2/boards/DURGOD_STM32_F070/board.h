@@ -17,6 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#define STM32_HSECLK                12000000U
+/* HSE=>   8Mhz     12MHz     (board.h)
+  PLLMUL    6         4       (mcuconf.h)  */
+
+#define STM32_HSECLK                12000000U       // 8000000U, 12000000U
 #include_next <board.h>
 #undef STM32_HSE_BYPASS

@@ -37,6 +37,9 @@
 /*
  * HAL driver system settings.
  */
+/* HSE=>   8Mhz     12MHz     (board.h)
+  PLLMUL    6         4       (mcuconf.h)  */
+
 #define STM32_NO_INIT                       FALSE
 #define STM32_PVD_ENABLE                    FALSE
 #define STM32_PLS                           STM32_PLS_LEV0
@@ -49,7 +52,7 @@
 #define STM32_SW                            STM32_SW_PLL
 #define STM32_PLLSRC                        STM32_PLLSRC_HSE
 #define STM32_PREDIV_VALUE                  1
-#define STM32_PLLMUL_VALUE                  4
+#define STM32_PLLMUL_VALUE                  4                       // 6, 4
 #define STM32_HPRE                          STM32_HPRE_DIV1
 #define STM32_PPRE                          STM32_PPRE_DIV1
 #define STM32_ADCSW                         STM32_ADCSW_HSI14
