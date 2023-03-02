@@ -9,6 +9,7 @@
       {"name": "MAC Mode", "title": "macintosh OS Mode", "shortName": "macOS"},
       {"name": "Mission Control", "title": "Mission Control in macOS", "shortName": "Mission Control"},
       {"name": "Launch Pad", "title": "Launch Pad in macOS", "shortName": "Launch Pad"},
+
       {"name": "Left Option", "title": "Left Option in macOS", "shortName": "Left Option"},
       {"name": "Right Option", "title": "Right Option in macOS", "shortName": "Right Option"},
       {"name": "Left Cmd", "title": "Left Command in macOS", "shortName": "Left Command"},
