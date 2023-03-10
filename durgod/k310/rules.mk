@@ -20,12 +20,12 @@ RGBLIGHT_ENABLE = no        # Enable keyboard RGB underglow
 AUDIO_ENABLE = no           # Audio output
 LTO_ENABLE = yes
 
+LAYOUTS = fullsize_ansi fullsize_iso
+
 DYNAMIC_MACRO_ENABLE = yes
 WPM_ENABLE = yes
 
 TAP_DANCE_ENABLE = yes      # Tappa Dance
-
-LAYOUTS = fullsize_ansi fullsize_iso
 
 ##ENCODER_ENABLE = yes        # Enable Encoder
 ##DIP_SWITCH_ENABLE = yes
@@ -45,3 +45,7 @@ OLED_ENABLE = no
 ISSI_ENABLE = yes			# If the I2C pullup resistors aren't install this must be disabled
 
 #WATCHDOG_ENABLE = no		# Resets keyboard if matrix_scan isn't run every 250ms//
+
+AUTO_SHIFT_ENABLE = yes
+KEY_LOCK_ENABLE = yes
+CAPS_WORD_ENABLE = yes

@@ -21,6 +21,6 @@
 
 #define HAL_USE_GPT         TRUE
 
-#define HAL_USE_I2C         TRUE
+#define HAL_USE_I2C         FALSE       // 이전과 다르게 I2C를 사용안하면  꺼야 컴파일 에러가 없음
 
 #include_next <halconf.h>

@@ -1,7 +1,8 @@
 {
     "keyboard_name": "METABLE K310",
     "manufacturer": "METABLE",
-
+    "url": "https://www.durgod.com/page9?product_id=53&_l=en",
+    "maintainer": "Jimmy Yun",
     "usb": {
         "vid": "0x1C6C",
         "pid": "0xF010",
