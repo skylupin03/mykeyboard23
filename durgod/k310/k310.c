@@ -33,7 +33,6 @@ void off_all_leds(void) {
     writePinHigh(LED_WIN_LOCK_PIN);
     writePinHigh(LED_MR_LOCK_PIN);
 }
-
 void on_all_leds(void) {
 #ifdef LED_NUM_LOCK_PIN
     writePinLow(LED_NUM_LOCK_PIN);
@@ -41,6 +40,13 @@ void on_all_leds(void) {
     writePinLow(LED_CAPS_LOCK_PIN);
     writePinLow(LED_SCROLL_LOCK_PIN);
     writePinLow(LED_WIN_LOCK_PIN);
+    writePinLow(LED_MR_LOCK_PIN);
+}
+
+void off_mr_leds(void) {
+    writePinHigh(LED_MR_LOCK_PIN);
+}
+void on_mr_leds(void) {
     writePinLow(LED_MR_LOCK_PIN);
 }
 
@@ -58,6 +64,7 @@ void led_init_ports(void) {
 
 #ifndef WINLOCK_DISABLED
 static bool win_key_locked = false;
+//extern static bool win_key_locked;
 
 // static bool all_key_locked = false;
 
@@ -78,6 +85,11 @@ key_combination_t key_comb_list[2] = {{2, {KC_LWIN, KC_TAB}}, {2, {KC_LWIN, KC_E
         return false
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
+
+//    if (get_autoshift_state()) writePinLow(LED_MR_LOCK_PIN);
+//    else writePinHigh(LED_MR_LOCK_PIN);
+//    writePin(LED_MR_LOCK_PIN, !get_autoshift_state());
+
     switch (keycode) {
         case KC_TGUI:
             if (record->event.pressed) { // Toggle GUI lock on key press
@@ -85,11 +97,14 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 writePin(LED_WIN_LOCK_PIN, !win_key_locked);
             }
             break;
+            
+        case OSM(MOD_LGUI):
         case KC_LGUI:
             if (win_key_locked) {
                 return false;
             }
             break;
+
 #    ifdef LED_MATRIX_ENABLE
         case KC_STER:
             if (record->event.pressed) {
@@ -155,34 +170,52 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             //     }
             //     return false;  // Skip all further processing of this key
 
-        case KC_WIN_MODE:
-            writePinHigh(LED_MR_LOCK_PIN);
-            set_single_persistent_default_layer(0);
-            // default_layer_set(1UL << 0);
-            // layer_off(2);
-            // layer_on(0);
-            return false;
+                    case KC_WIN_MODE:
+                        writePinHigh(LED_MR_LOCK_PIN);
+                        set_single_persistent_default_layer(0);
+                        // default_layer_set(1UL << 0);
+                        // layer_off(2);
+                        // layer_on(0);
+                        return false;
 
-        case KC_MAC_MODE:
-            writePinLow(LED_MR_LOCK_PIN);
-            set_single_persistent_default_layer(2);
-            // default_layer_set(1UL << 2);
-            // layer_off(0);
-            // layer_on(2);
-            return false;
+                    case KC_MAC_MODE:
+                        writePinLow(LED_MR_LOCK_PIN);
+                        set_single_persistent_default_layer(2);
+                        // default_layer_set(1UL << 2);
+                        // layer_off(0);
+                        // layer_on(2);
+                        return false;
 
-            // case KC_TKEY:                        // 전체키 input off -> 좀 더  손을 봐야 함 위에 나열한 키는 입력이 되며, FN키는 동작되게 해야 할듯함
-            //     if (record->event.pressed){
-            //         all_key_locked = !all_key_locked;
-            //         writePin(LED_MR_LOCK_PIN, !all_key_locked);
-            //     }
-            //     break;
-            // default:
-            //     if (all_key_locked) { return false;  }
+                        // case KC_TKEY:                        // 전체키 input off -> 좀 더  손을 봐야 함 위에 나열한 키는 입력이 되며, FN키는 동작되게 해야 할듯함
+                        //     if (record->event.pressed){
+                        //         all_key_locked = !all_key_locked;
+                        //         writePin(LED_MR_LOCK_PIN, !all_key_locked);
+                        //     }
+                        //     break;
+                        // default:
+                        //     if (all_key_locked) { return false; }
+
+                    case AS_ON:
+                        //on_mr_leds();
+                        writePinLow(LED_MR_LOCK_PIN);
+                        break;
+                    case AS_OFF:
+                        //off_mr_leds();                    
+                        writePinHigh(LED_MR_LOCK_PIN);
+                        break;
+                        
+
+        case QK_BOOT:
+            if (record->event.pressed) {
+                // Flash LEDs to indicate bootloader mode is enabled.
+                on_all_leds();
+            }
+            break;           
     }
     return process_record_user(keycode, record);
 }
 #endif /* WINLOCK_DISABLED */
+
 
 #ifndef HW_RESET_PIN_DISABLED
 static void hardware_reset_cb(void *arg) {
@@ -194,7 +227,7 @@ static void hardware_reset_cb(void *arg) {
 
 void keyboard_pre_init_kb(void) {
     setPinInputHigh(HARDWARE_RESET_PIN);
-
+    
 #ifndef HW_RESET_PIN_DISABLED
     /* Jump to bootloader when the hardware reset button is pressed */
     palEnablePadEvent(PAL_PORT(HARDWARE_RESET_PIN), PAL_PAD(HARDWARE_RESET_PIN), PAL_EVENT_MODE_FALLING_EDGE);
@@ -205,6 +238,13 @@ void keyboard_pre_init_kb(void) {
         bootloader_jump();
     }
 #endif
+}
+
+void keyboard_post_init_kb(void) {
+//    tap_code16(KC_2);       // (AS_OFF); // 동작안함
+    autoshift_disable();
+//    if (get_autoshift_state()) writePinHigh(LED_MR_LOCK_PIN);  // 동작안함, LED제어는 되는데 아직 autoshift가 동작안하는 듯 
+//    else writePinLow(LED_MR_LOCK_PIN);
 }
 //----------------------------------
 

@@ -49,3 +49,4 @@ ISSI_ENABLE = yes			# If the I2C pullup resistors aren't install this must be di
 AUTO_SHIFT_ENABLE = yes
 KEY_LOCK_ENABLE = yes
 CAPS_WORD_ENABLE = yes
+LEADER_ENABLE = yes
