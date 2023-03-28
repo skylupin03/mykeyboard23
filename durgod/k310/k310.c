@@ -243,8 +243,10 @@ void keyboard_pre_init_kb(void) {
 void keyboard_post_init_kb(void) {
 //    tap_code16(KC_2);       // (AS_OFF); // 동작안함
     autoshift_disable();
-//    if (get_autoshift_state()) writePinHigh(LED_MR_LOCK_PIN);  // 동작안함, LED제어는 되는데 아직 autoshift가 동작안하는 듯 
-//    else writePinLow(LED_MR_LOCK_PIN);
+    oneshot_disable();      // oneshot_enable(), oneshot_toggle()
+
+    //    if (get_autoshift_state()) writePinHigh(LED_MR_LOCK_PIN);  // 동작안함, LED제어는 되는데 아직 autoshift가 동작안하는 듯
+    //    else writePinLow(LED_MR_LOCK_PIN);
 }
 //----------------------------------
 

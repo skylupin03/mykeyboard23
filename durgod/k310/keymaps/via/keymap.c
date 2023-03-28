@@ -146,7 +146,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, _______, _______,  EE_CLR,    BL_ON,   BL_TOGG, BL_STEP,    KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
       _______, _______, KC_WINM, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,  QK_RBT,    BL_OFF,  BL_BRTG, KC_STER,    KC_BTN4, KC_MS_U,  KC_BTN5, KC_WH_U,
       CL_SWAP, DT_DOWN, DT_UP, _______, DT_PRNT, _______, _______, _______, _______, QK_LOCK, _______,  _______, _______, _______,                                 KC_MS_L, KC_BTN3,  KC_MS_R,
-        AS_ON, _______, AS_DOWN,   AS_UP, CW_TOGG, AS_RPT, OS_OFF, _______, KC_MACM, _______,   OS_ON,  OS_OFF,           AS_OFF,              BL_INC,             KC_WH_L, KC_MS_D,  KC_WH_R, KC_WH_D,
+        AS_ON, _______, AS_DOWN,   AS_UP, CW_TOGG, AS_RPT, _______, _______, KC_MACM, _______,   OS_ON,  OS_OFF,           AS_OFF,              BL_INC,             KC_WH_L, KC_MS_D,  KC_WH_R, KC_WH_D,
       CL_NORM, KC_TGUI, _______,                            _______,                            _______, _______, QK_LEAD, _______,    KC_SPDD,  BL_DEC, KC_SPDI,    KC_BTN1,           KC_BTN2
   ),
 /*
