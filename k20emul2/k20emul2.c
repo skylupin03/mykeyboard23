@@ -70,7 +70,7 @@ static void BUTTON_EXT_PIN_cb(void *arg) {
  //        oled_write_P(PSTR("Test"), false);
     chSysUnlockFromISR();
 }
-//---------------------
+//--------------------------------------------------------------------------------/*-------------------------------
 
 #ifdef ENCODER_ENABLE
 
@@ -170,8 +170,8 @@ void keyboard_post_init_kb(void) {
 #define ___ NO_LED
 
 #ifdef RGB_MATRIX_ENABLE
- // __attribute__ ((weak))
-void rgb_matrix_indicators_kb(void) {
+
+__attribute__ ((weak)) bool rgb_matrix_indicators_kb(void) {
     if (rgb_matrix_is_enabled()) {  // turn the lights on when it is enabled.
         uint8_t layer = get_highest_layer(layer_state);
         switch (layer) {
@@ -201,6 +201,8 @@ void rgb_matrix_indicators_kb(void) {
                 rgb_matrix_set_color(241, 20, 20, 20);
             }
     }
+
+        return TRUE;
 }
 
 led_config_t g_led_config = { // K20 Key Matrix & 31FL3731 KEYBOARD LED TEST array (Mechanic RGB layout) (made at SKYDIGITAL)
@@ -282,7 +284,8 @@ void led_matrix_indicators_kb(void) {
 
 //-----------------------------
 
-const is31_led PROGMEM g_is31_leds[DRIVER_LED_TOTAL] = {
+//const is31_led PROGMEM g_is31_leds[DRIVER_LED_TOTAL] = {
+const is31_led PROGMEM g_is31_leds[RGB_MATRIX_LED_COUNT] = {    
     {0,C1_1},         {0,C1_2},{0,C1_3},{0,C1_4},{0,C1_5},    {0,C1_6},{0,C1_7},{0,C1_8}, {0,C8_1},     //8
 
     {0,C2_1},         {0,C2_2},{0,C2_3},{0,C2_4},{0,C2_5},      {0,C2_6},{0,C2_7},{0,C2_8}, {0,C8_2},     {0,C7_14},{0,C7_15},{0,C7_16},{0,C1_9},   {0,C1_10},{0,C1_11},{0,C1_12},      {0,C1_13},{0,C1_14},{0,C1_15},{0,C1_16},         // 28

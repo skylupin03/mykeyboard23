@@ -1,7 +1,7 @@
 #DEFAULT_FOLDER=skylupin03/k20emul2
 
 #MCU = STM32F072
-MCU = STM32F411
+MCU = STM32F401
 
 # This file intentionally left blank
 #BOARD = GENERIC_STM32_F072XB

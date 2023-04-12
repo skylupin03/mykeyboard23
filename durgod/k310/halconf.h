@@ -21,6 +21,10 @@
 
 #define HAL_USE_GPT         TRUE
 
+#ifdef LED_MATRIX_ENABLE
+#define HAL_USE_I2C         TRUE 
+#else
 #define HAL_USE_I2C         FALSE       // 이전과 다르게 I2C를 사용안하면  꺼야 컴파일 에러가 없음
+#endif
 
 #include_next <halconf.h>

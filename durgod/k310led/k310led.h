@@ -18,7 +18,6 @@
 #pragma once
 #include "quantum.h"
 
-// 커스텀 키 갯수가 16개 한계일까?
 //#ifndef WINLOCK_DISABLED
 // Define the TGUI key here so it is available in QMK configurator
 enum K3x0_keycodes {

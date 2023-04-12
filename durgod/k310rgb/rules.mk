@@ -5,14 +5,16 @@
 #MCU = STM32F072
 MCU = STM32F401
 
+
 # This file intentionally left blank
 #BOARD = GENERIC_STM32_F072XB
 #BOARD = DURGOD_STM32_F070
 #BOARD = BLACKPILL_STM32_F401
 #BOAED = GENERIC_STM32_F401XC
+#BOAED = ST_NUCLEO64_F401RE
 
 # 삭제해도 됨 기본클럭 및 PLL설정이 8M로 되어 있음
-BOAED = TAUCHEF_STM32_F401
+#BOAED = TAUCHEF_STM32_F401
 
 # Bootloader selection
 BOOTLOADER = stm32-dfu
@@ -30,12 +32,12 @@ RGBLIGHT_ENABLE = no        # Enable keyboard RGB underglow
 AUDIO_ENABLE = no           # Audio output
 LTO_ENABLE = yes
 
+LAYOUTS = fullsize_ansi fullsize_iso
+
 DYNAMIC_MACRO_ENABLE = yes
 WPM_ENABLE = yes
 
 TAP_DANCE_ENABLE = yes      # Tappa Dance
-
-LAYOUTS = fullsize_ansi fullsize_iso
 
 ##ENCODER_ENABLE = yes        # Enable Encoder
 ##DIP_SWITCH_ENABLE = yes
@@ -45,7 +47,7 @@ LAYOUTS = fullsize_ansi fullsize_iso
 RGB_MATRIX_ENABLE = yes
 RGB_MATRIX_DRIVER = IS31FL3731
 
-#LED_MATRIX_ENABLE = yes
+#LED_MATRIX_ENABLE = no
 #LED_MATRIX_DRIVER = IS31FL3731
 
 #OLED_ENABLE = yes
@@ -55,3 +57,8 @@ RGB_MATRIX_DRIVER = IS31FL3731
 #ISSI_ENABLE = yes			# If the I2C pullup resistors aren't install this must be disabled
 
 #WATCHDOG_ENABLE = no		# Resets keyboard if matrix_scan isn't run every 250ms//
+
+AUTO_SHIFT_ENABLE = yes
+KEY_LOCK_ENABLE = yes
+CAPS_WORD_ENABLE = yes
+LEADER_ENABLE = yes

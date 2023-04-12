@@ -1,11 +1,12 @@
 {
     "keyboard_name": "METABLE K310 RGB",
     "manufacturer": "METABLE",
-
+    "url": "https://www.durgod.com/page9?product_id=53&_l=en",
+    "maintainer": "Jimmy Yun",
     "usb": {
         "vid": "0x1C6C",
         "pid": "0xF012",
-        "device_version": "0.5.0"
+        "device_version": "0.0.1"
     },
 
     "layouts": {

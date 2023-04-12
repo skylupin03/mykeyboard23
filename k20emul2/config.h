@@ -8,8 +8,11 @@
 #define MATRIX_ROWS 8
 #define MATRIX_COLS 3
 
-#define MATRIX_ROW_PINS { B8, A1, A2, A3, A4, A5, A6, A7 }
-#define MATRIX_COL_PINS { B0, B1, B10 }
+#define MATRIX_ROW_PINS { B8, A1, A2, A3, A4, A5, A6, A7 }        // K20
+#define MATRIX_COL_PINS { B0, B1, B10 }                           // K20
+
+//#define MATRIX_ROW_PINS { B8, B9, B10, B12, B13, B14, A6, A7 }        // K30
+//#define MATRIX_COL_PINS { A0, A1, A2 }                             // K30
 
 #define DIODE_DIRECTION ROW2COL
 
@@ -58,7 +61,7 @@
 // Dynamic EEPROM
 // Something sensible or else VIA may crash
 // Users may enable more if they wish
- #define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  4095
+// #define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  4095
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
@@ -115,7 +118,8 @@
 #endif
 
 #ifdef RGB_MATRIX_ENABLE
-#define DRIVER_LED_TOTAL 254       // for RGB matrix //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
+// DRIVER_LED_TOTAL --> RGB_MATRIX_LED_COUNT
+#define RGB_MATRIX_LED_COUNT 254       // for RGB matrix //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
     #define RGBLED_NUM 254
 #define RGB_MATRIX_STARTUP_VAL 40
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
@@ -142,7 +146,8 @@
 #define ENABLE_RGB_MATRIX_CYCLE_PINWHEEL
 #define ENABLE_RGB_MATRIX_CYCLE_SPIRAL
 #define ENABLE_RGB_MATRIX_DUAL_BEACON
-#define ENABLE_RGB_MATRIX_RAINBOW_BEACON///////////////////////////////////
+#define ENABLE_RGB_MATRIX_RAINBOW_BEACON
+
 #define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS
 #define ENABLE_RGB_MATRIX_RAINDROPS
 #define ENABLE_RGB_MATRIX_JELLYBEAN_RAINDROPS
@@ -152,12 +157,11 @@
 #define ENABLE_RGB_MATRIX_FRACTAL
 #define ENABLE_RGB_MATRIX_PIXEL_RAIN
 #define ENABLE_RGB_MATRIX_PIXEL_FLOW
-
 #define ENABLE_RGB_MATRIX_PIXEL_FRACTAL
-
+// enabled only if RGB_MATRIX_FRAMEBUFFER_EFFECTS is defined
 #define ENABLE_RGB_MATRIX_TYPING_HEATMAP
 #define ENABLE_RGB_MATRIX_DIGITAL_RAIN
-
+// enabled only of RGB_MATRIX_KEYPRESSES or RGB_MATRIX_KEYRELEASES is defined
 #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE
 #define ENABLE_RGB_MATRIX_SOLID_REACTIVE
 #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE
@@ -210,7 +214,7 @@
 
 #define LED_DRIVER_1_LED_TOTAL 144     // 104
 //#define DRIVER_2_LED_TOTAL 37
-#define DRIVER_LED_TOTAL LED_DRIVER_1_LED_TOTAL       //  + DRIVER_2_LED_TOTAL)
+#define RGB_MATRIX_LED_COUNT LED_DRIVER_1_LED_TOTAL       //  + DRIVER_2_LED_TOTAL)
 
 //#define LED_MATRIX_ROWS 15
 //#define LED_MATRIX_COLS 7
@@ -226,7 +230,7 @@
 //#define LED_DISABLE_TIMEOUT 0 // number of milliseconds to wait until led automatically turns off
 //#define LED_DISABLE_AFTER_TIMEOUT 0 // OBSOLETE: number of ticks to wait until disabling effects
 #define LED_DISABLE_WHEN_USB_SUSPENDED // turn off effects when suspended
-//#define LED_MATRIX_LED_PROCESS_LIMIT (DRIVER_LED_TOTAL + 4) / 5 // limits the number of LEDs to process in an animation per task run (increases keyboard responsiveness)
+//#define LED_MATRIX_LED_PROCESS_LIMIT (RGB_MATRIX_LED_COUNT + 4) / 5 // limits the number of LEDs to process in an animation per task run (increases keyboard responsiveness)
 //#define LED_MATRIX_LED_FLUSH_LIMIT 16 // limits in milliseconds how frequently an animation will update the LEDs. 16 (16ms) is equivalent to limiting to 60fps (increases keyboard responsiveness)
 #define LED_MATRIX_MAXIMUM_BRIGHTNESS 255 // limits maximum brightness of LEDs
 #define LED_MATRIX_STARTUP_MODE LED_MATRIX_BREATHING // Sets the default mode, if none has been set

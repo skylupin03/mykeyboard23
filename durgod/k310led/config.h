@@ -22,7 +22,7 @@
 #define WAIT_US_TIMER GPTD3
 // #define STM32_GPT_USE_TIM3 TRUE		// Board 디렉토리 파일에 디파인 있음
 
-/* key matrix size (rows in specific keyboard variant) */
+/* key matrix size  */
 #define MATRIX_COLS 16
 #define MATRIX_ROWS 8
 
@@ -30,9 +30,9 @@
     { A0, A1, A2, A3, A4, A5, A6, A7 }
 #define MATRIX_COL_PINS \
     { C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, B15, C6, C7, C10, C11, C12 }
-#define DIODE_DIRECTION ROW2COL
 
-#define FORCE_NKRO
+/* COL2ROW, ROW2COL*/    
+#define DIODE_DIRECTION ROW2COL
 
 // Dynamic EEPROM
 // Something sensible or else VIA may crash, Users may enable more if they wish
@@ -43,23 +43,41 @@
 
 /* Bootmagic Lite key configuration */
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP TRUE
-#define BOOTMAGIC_LITE_ROW 0
-#define BOOTMAGIC_LITE_COLUMN 0
-
-#define TAPPING_TERM 175 //////////////////////////////////////////////////
+#define BOOTMAGIC_LITE_ROW              0
+#define BOOTMAGIC_LITE_COLUMN           0
 
 /* LED indicator pins */
-#define LED_CAPS_LOCK_PIN C9
+#define LED_CAPS_LOCK_PIN   C9
 #define LED_SCROLL_LOCK_PIN A8
-#define LED_WIN_LOCK_PIN A9
-#define LED_MR_LOCK_PIN A10
-#define LED_PIN_ON_STATE 0
+#define LED_WIN_LOCK_PIN    A9
+#define LED_MR_LOCK_PIN     A10
+#define LED_PIN_ON_STATE    0
 
-#define LED_NUM_LOCK_PIN C8
+#define LED_NUM_LOCK_PIN    C8
 
 /* Original hardware "reset" button on pin D2 */
 #define HARDWARE_RESET_PIN D2
 
+//------------------------------------- Add ----------------------------------
+
+// #define FORCE_NKRO
+
+#define TAPPING_TERM 175 //////////////////////////////////////////////////
+#define TAPPING_TERM_PER_KEY
+#define AUTO_SHIFT_TIMEOUT  170
+#define AUTO_SHIFT_REEPAT
+#define NO_AUTO_SHIFT_SPECIAL
+
+#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
+
+#define ONESHOT_TAP_TOGGLE 2  /* Tapping this number of times holds the key until tapped once again. */
+#define ONESHOT_TIMEOUT 5000  /* Time (in ms) before the one shot key is released */
+
+#define LEADER_TIMEOUT 500
+#define LEADER_PER_KEY_TIMING
+//#define LEADER_NO_TIMEOUT
+
+//-------------------------------------------------------------------------------
 #ifdef LED_MATRIX_ENABLE
 #    define BACKLIGHT_LEVELS 5
 /* LED Matrix Driver Configuration */

@@ -69,6 +69,13 @@ void on_all_leds(void) {
     writePinLow(LED_MR_LOCK_PIN);
 }
 
+void off_mr_leds(void) {
+    writePinHigh(LED_MR_LOCK_PIN);
+}
+void on_mr_leds(void) {
+    writePinLow(LED_MR_LOCK_PIN);
+}
+
 /* WinLock and MR LEDs are non-standard. Need to override led init */
 void led_init_ports(void) {
 #ifdef LED_NUM_LOCK_PIN
@@ -84,10 +91,11 @@ void led_init_ports(void) {
 
 #ifndef WINLOCK_DISABLED
 static bool win_key_locked = false;
+//extern static bool win_key_locked;
 
-//static bool all_key_locked = false;
+// static bool all_key_locked = false;
 
-static uint8_t mac_keycode[4] = { KC_LOPT, KC_ROPT, KC_LCMD, KC_RCMD };
+static uint8_t mac_keycode[4] = {KC_LOPT, KC_ROPT, KC_LCMD, KC_RCMD};
 
 typedef struct PACKED {
     uint8_t len;
@@ -102,19 +110,25 @@ key_combination_t key_comb_list[2] = {
 #define HCS(report) host_consumer_send(record->event.pressed ? report : 0); return false
 #define HSS(report) host_system_send(record->event.pressed ? report : 0); return false
 
-
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
+
+//    if (get_autoshift_state()) writePinLow(LED_MR_LOCK_PIN);
+//    else writePinHigh(LED_MR_LOCK_PIN);
+//    writePin(LED_MR_LOCK_PIN, !get_autoshift_state());
 
     switch (keycode) {
         case KC_TGUI:
-            if (record->event.pressed) {  // Toggle GUI lock on key press
+            if (record->event.pressed) { // Toggle GUI lock on key press
                 win_key_locked = !win_key_locked;
                 writePin(LED_WIN_LOCK_PIN, !win_key_locked);
             }
             break;
+            
+        case OSM(MOD_LGUI):
         case KC_LGUI:
             if (win_key_locked) { return false; }
             break;
+
 #ifdef LED_MATRIX_ENABLE
         case KC_STER:
             if (record->event.pressed) {  led_matrix_step_reverse(); }
@@ -127,7 +141,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             break;
 #endif
         case KC_MISSION_CONTROL:
-            if (record->event.pressed){
+            if (record->event.pressed) {
                 host_consumer_send(0x29F);
             } else {
                 host_consumer_send(0);
@@ -139,7 +153,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             } else {
                 host_consumer_send(0);
             }
-            return false;  // Skip all further processing of this key
+            return false; // Skip all further processing of this key
 
         case KC_SPOTLIGHT:
             HCS(0x221);
@@ -159,7 +173,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             } else {
                 unregister_code(mac_keycode[keycode - KC_LOPTN]);
             }
-            return false;  // Skip all further processing of this key
+            return false; // Skip all further processing of this key
 
         // case KC_TASK_VIEW:
         // case KC_FILE_EXPLORER:
@@ -197,7 +211,24 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         //     }
         //     break;
         // default:
-        //     if (all_key_locked) { return false;  }
+        //     if (all_key_locked) { return false; }
+
+                    case AS_ON:
+                        //on_mr_leds();
+                        writePinLow(LED_MR_LOCK_PIN);
+                        break;
+                    case AS_OFF:
+                        //off_mr_leds();                    
+                        writePinHigh(LED_MR_LOCK_PIN);
+                        break;
+                        
+
+        case QK_BOOT:
+            if (record->event.pressed) {
+                // Flash LEDs to indicate bootloader mode is enabled.
+                on_all_leds();
+            }
+            break;           
     }
     return process_record_user(keycode, record);
 }
@@ -226,15 +257,24 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 // #endif
 // }
 
+void keyboard_post_init_kb(void) {
+//    tap_code16(KC_2);       // (AS_OFF); // 동작안함
+    autoshift_disable();
+    oneshot_disable();      // oneshot_enable(), oneshot_toggle()
+
+    //    if (get_autoshift_state()) writePinHigh(LED_MR_LOCK_PIN);  // 동작안함, LED제어는 되는데 아직 autoshift가 동작안하는 듯
+    //    else writePinLow(LED_MR_LOCK_PIN);
+}
 //----------------------------------
 
 #define __ NO_LED
 #define ___ NO_LED
 
+//------------------------------------------
 #ifdef RGB_MATRIX_ENABLE
 
-__attribute__ ((weak)) bool rgb_matrix_indicators_user(void)  {
-
+//__attribute__ ((weak)) bool rgb_matrix_indicators_user(void)  {
+__attribute__ ((weak)) bool rgb_matrix_indicators_kb(void)  {
     led_t host_leds = host_keyboard_led_state();
 
     if (host_leds.caps_lock) rgb_matrix_set_color(16, 0xFF, 0xFF, 0xFF);
@@ -387,7 +427,7 @@ __attribute__ ((weak)) bool rgb_matrix_indicators_user(void)  {
 
 const is31_led PROGMEM g_is31_leds[RGB_MATRIX_LED_COUNT] = {
 // DRIVER 1 0xee
-    {0,  C1_9, C3_10, C4_10},  // ` B block upper part 001
+    {0,  C1_9, C3_10, C4_10},  // `   B block upper part 001
     {0, C1_10, C2_10, C4_11},  //1
     {0, C1_11, C2_11, C3_11},  //2
     {0, C1_12, C2_12, C3_12},  //3
@@ -395,7 +435,7 @@ const is31_led PROGMEM g_is31_leds[RGB_MATRIX_LED_COUNT] = {
     {0, C1_14, C2_14, C3_14},  //5
     {0, C1_15, C2_15, C3_15},  //6
     {0, C1_16, C2_16, C3_16},  //7
-    {0,  C9_9,  C8_9,  C7_9},  // esc B block lower part 009
+    {0,  C9_9,  C8_9,  C7_9},  // esc   B block lower part 009
     {0, C9_10, C8_10, C7_10},  //f1
     {0, C9_11, C8_11, C7_11},  //f2
     {0, C9_12, C8_12, C7_12},  //f3
@@ -622,11 +662,11 @@ KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPC,                   
         1, 1, 1,          4,          1, 1, 1, 1, 1, 1, 1, 1,    4, 1,
     }
 */
-
 #endif
 
+//------------------------------------------
 
-#ifdef LED_MATRIX_ENABLE
+#ifdef LED_MATRIX_ENABLE        // RGB 보다 앞에 있으면 에러남 실행 되는것이 희안, 어딘가에 모르는 곳에 LED_MATRIX_ENABLE이 define되었나?
 
 __attribute__ ((weak)) bool led_matrix_indicators_kb(void) {
 

@@ -26,16 +26,21 @@
 #define MATRIX_COLS 16
 #define MATRIX_ROWS 8
 
-#define MATRIX_ROW_PINS { C0, C1, C2, C3, C4, C5, C6, C7}       // {A0, A1, A2, A3, A4, A5, A6, A7 }
+#define MATRIX_ROW_PINS { C0, C1, C2, C3, C4, C5, C6, C7}       
+                    // {A0, A1, A2, A3, A4, A5, A6, A7 }
 #define MATRIX_COL_PINS { B0, B1, B2, B3, B4, B5, B8, B9, B10, B13, B14, B15, C9, C10, C11, C12}
-                     //{C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, B15, C6, C7, C10, C11, C12 }
+                    //{C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, B15, C6, C7, C10, C11, C12 }
+
+/* COL2ROW, ROW2COL*/    
 #define DIODE_DIRECTION ROW2COL
-//#define DIODE_DIRECTION COL2ROW
-#define FORCE_NKRO
 
 // Dynamic EEPROM
 // Something sensible or else VIA may crash, Users may enable more if they wish
-#define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  4095
+#define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  4095      // 4095     // 16383
+
+//#define DYNAMIC_KEYMAP_LAYER_COUNT 4
+
+
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
@@ -51,14 +56,33 @@
 #define LED_CAPS_LOCK_PIN   A14     //C9
 #define LED_SCROLL_LOCK_PIN A15     //A8
 #define LED_WIN_LOCK_PIN    C13     //A9
-#define LED_MR_LOCK_PIN     A0      // C14   //A10
+#define LED_MR_LOCK_PIN     A0      //A10
 #define LED_PIN_ON_STATE    0
 
 #define LED_NUM_LOCK_PIN    A13     //C8
 
 /* Original hardware "reset" button on pin D2 */
 #define HARDWARE_RESET_PIN  D2
+//------------------------------------- Add ----------------------------------
 
+// #define FORCE_NKRO
+
+#define TAPPING_TERM 175 //////////////////////////////////////////////////
+#define TAPPING_TERM_PER_KEY
+#define AUTO_SHIFT_TIMEOUT  170
+#define AUTO_SHIFT_REEPAT
+#define NO_AUTO_SHIFT_SPECIAL
+
+#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
+
+#define ONESHOT_TAP_TOGGLE 2  /* Tapping this number of times holds the key until tapped once again. */
+#define ONESHOT_TIMEOUT 5000  /* Time (in ms) before the one shot key is released */
+
+#define LEADER_TIMEOUT 500
+#define LEADER_PER_KEY_TIMING
+//#define LEADER_NO_TIMEOUT
+
+//-------------------------------------------------------------------------------
 #ifdef RGB_MATRIX_ENABLE
 
 #    define DRIVER_ADDR_1 0b1110111
@@ -157,14 +181,7 @@
 #define ENABLE_RGB_MATRIX_SOLID_SPLASH
 #define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
 #endif
-
-
-
-
-
-
-
-
+//-----------------------------------------------------
 #ifdef LED_MATRIX_ENABLE
     #define BACKLIGHT_LEVELS 5
     /* LED Matrix Driver Configuration */
