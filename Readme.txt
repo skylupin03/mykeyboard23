@@ -15,3 +15,14 @@
           10/31 -> 윈모드-맥모드, 맥키 추가, Via에서 layer 변경에러 수정
                  
 terrazzo ; terrazzo를 K20에 이식하여 동작을 검토함
+
+
+----------------------------------------------------------------------------------------------
+
+< Metable Vender ID = 0x1C6C >
+< Device ID >
+METABLE K310       = 0xF010
+METABLE K310 LED = 0xF011
+METABLE K310 RGB = 0xF012?
+METABLE K30 RGB = 0xF020		(1 encoder)
+METABLE K20 RGB = 0xF021           (waycos에서 개발했던것 2 encoder)
