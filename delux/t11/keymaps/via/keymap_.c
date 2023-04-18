@@ -1,10 +1,13 @@
 #include QMK_KEYBOARD_H
 //#include "k20emul2.h"
 
+uint16_t startup_timer;
+static bool finished_timer = false;
+
 enum layers {   WIN_BASE,
                 WIN_FN,
                 MAC_BASE,
-                MAC_FN  
+                MAC_FN
             };
 
 enum K20_keycodes {
@@ -55,7 +58,6 @@ KC_LOCK_SCREEN,         // MAC_key
 
 #define KC_WINM KC_WIN_MODE      // DIP switch
 #define KC_MACM KC_MAC_MODE
-
 #define KC_MCTL KC_MISSION_CONTROL
 #define KC_LPAD KC_LAUNCHPAD
 #define KC_SPLT KC_SPOTLIGHT
@@ -106,29 +108,29 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-    [WIN_BASE] = LAYOUT(KC_ESC,       KC_1,      KC_2,      KC_3,
-                        KC_TAB,       KC_Q,      KC_W,      KC_E,      KC_R,      KC_T,      KC_4,     KC_5,
-                        KC_B,         KC_A,      KC_S,      KC_D,      KC_F,      KC_G,      KC_M, 
+    [WIN_BASE] = LAYOUT(TD(TD_NCAL), KC_F1,     KC_F2,     KC_F3, 
+                        KC_ESC,       KC_1,      KC_2,      KC_3,      KC_4,      KC_5,      KC_6,     KC_DEL,
+                        KC_TAB,       KC_7,      KC_8,      KC_9,      KC_0,    KC_EQL,    KC_ENT, 
                         KC_LSFT,      KC_Z,      KC_X,      KC_C,      KC_V,
-                        KC_LCTL,  MO(WIN_FN),  KC_LALT,    KC_SPC),
+                        KC_LCTL,MO(WIN_FN),   KC_LALT,    KC_SPC,                       KC_MUTE),
 
-    [WIN_FN] = LAYOUT(  QK_BOOT,   KC_WINM,   KC_MACM,   _______, 
+    [WIN_FN] = LAYOUT(  QK_BOOT,   KC_WINM,   KC_MACM,   _______,  
                         _______,   _______,   _______,   _______,   _______,   _______,   _______,   _______,
-                        _______,   RGB_SPI,   RGB_HUI,   RGB_SAI,   RGB_VAI,   _______,   RGB_TOG, 
-                        _______,   RGB_SPD,   RGB_HUD,   RGB_SAD,   RGB_VAD,
-                        EE_CLR,    _______,    QK_RBT,   RGB_MOD),
+                        _______,   RGB_SPI,   RGB_HUI,   RGB_SAI,   _______,   _______,   _______, 
+                        _______,   RGB_SPD,   RGB_HUD,   RGB_SAD,   _______,
+                        EE_CLR,    _______,    QK_RBT,   RGB_MOD,                         RGB_TOG ),
 
     [MAC_BASE] = LAYOUT(TD(TD_NCAL), KC_F1,     KC_F2,     KC_F3, 
                         KC_ESC,       KC_1,      KC_2,      KC_3,      KC_4,      KC_5,      KC_6,     KC_DEL,
                         KC_TAB,       KC_7,      KC_8,      KC_9,      KC_0,    KC_EQL,    KC_ENT, 
                         KC_LSFT,      KC_Z,      KC_X,      KC_C,      KC_V,
-                        KC_LCTL,  MO(MAC_FN), KC_LALT,    KC_SPC),
+                        KC_LCTL,MO(MAC_FN),   KC_LALT,    KC_SPC,                       KC_MUTE),
 
-    [MAC_FN] = LAYOUT(  QK_BOOT,   KC_WINM,   KC_MACM,   _______, 
+    [MAC_FN] = LAYOUT(  QK_BOOT,   KC_WINM,   KC_MACM,   _______,  
                         _______,   _______,   _______,   _______,   _______,   _______,   _______,   _______,
-                        _______,   RGB_SPI,   RGB_HUI,   RGB_SAI,   RGB_VAI,   _______,   RGB_TOG, 
-                        _______,   RGB_SPD,   RGB_HUD,   RGB_SAD,   RGB_VAD,
-                        EE_CLR,    _______,    QK_RBT,   RGB_MOD)
+                        _______,   RGB_SPI,   RGB_HUI,   RGB_SAI,   _______,   _______,   _______, 
+                        _______,   RGB_SPD,   RGB_HUD,   RGB_SAD,   _______,
+                        EE_CLR,    _______,    QK_RBT,   RGB_MOD,                         RGB_TOG )             
 };
 
 //-----------------------------------------------------------------
@@ -222,6 +224,9 @@ static bool win_key_locked = false;
 static uint8_t mac_keycode[4] = { KC_LOPT, KC_ROPT, KC_LCMD, KC_RCMD };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+
+    finished_timer = true;
+
     switch (keycode) {
         case KC_TGUI:
             if (record->event.pressed) {
@@ -290,19 +295,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             // default_layer_set(1UL << 2);
             //    layer_off(0);
             //    layer_off(1);            
-            return false;
+            return false;          
 
         case QK_BOOT:
             if (record->event.pressed) {
-                // Flash LEDs to indicate bootloader mode is enabled.
- //               on_all_leds();
-                rgb_matrix_set_color(0,200,10,10);
-                rgb_matrix_set_color(1,180,10,10);
-                rgb_matrix_set_color(2,160,10,10);
-                rgb_matrix_set_color(3,140,10,10);                                         
+//               on_all_leds();      
             }
             return true; 
-            break;   
             
         default:
             return true;   // Process all other keycodes normally
@@ -323,64 +322,146 @@ bool dip_switch_update_user(uint8_t index, bool active) {
 
 #ifdef OLED_ENABLE
 
-// static void render_logo(void) {
-//     static const char PROGMEM qmk_logo[] = {
-//         0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x93, 0x94,
-//         0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4,
-//         0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0x00
-//     };
-//     oled_write_P(qmk_logo, false);
-// }
+// uint16_t startup_timer;
+// static bool finished_timer = false;
 
-static void render_logo(void) {
-    static const unsigned char PROGMEM raw_logo[] = {
-        240,248,252,252,254,254,222,206,238,238,238,238,238,206,206, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,254,254,252,252,248,248,  0,  0,  0,  0, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,  0,  0,  0,  0,254,254,254,254,254,254,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
-        0,254,254,254,254,254,254,255,255,255,255,255,255,  1,  1,  1,  3,  3,  3,  3,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,255,255,255,255,255,255,  0,  0,  0,  0, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 24,  0,  0,  0,  0,255,255,255,255,255,255, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
-        60,255,255,255,255,255,255, 31, 63, 63,127,127,127,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,127,127,127,127, 31, 31,  0,  0,  0,  0,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112, 96, 96,  0,  0,  0, 
-        0,127,127,127,127,127,127,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,127,127,127,127,127,127,
-    };
-    oled_write_raw_P(raw_logo, sizeof(raw_logo));
+static const char logo_APPLE[] = {0x95,0x96,0x00, 0xB5,0xB6,0x00};
+static const char logo_MS[] = {0x97,0x98,0x00, 0xB7,0xB8,0x00}; 
+
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    startup_timer = timer_read();
+    return rotation;                    //    return OLED_ROTATION_180; // flips the display 180 degrees if offhand 
 }
 
+// static void render_logo(void) {
+//     static const char PROGMEM raw_logo[] = {
+//         240,248,252,252,254,254,222,206,238,238,238,238,238,206,206, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,254,254,252,252,248,248,  0,  0,  0,  0, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,  0,  0,  0,  0,254,254,254,254,254,254,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+//         0,254,254,254,254,254,254,255,255,255,255,255,255,  1,  1,  1,  3,  3,  3,  3,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,255,255,255,255,255,255,  0,  0,  0,  0, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 24,  0,  0,  0,  0,255,255,255,255,255,255, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
+//         60,255,255,255,255,255,255, 31, 63, 63,127,127,127,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,127,127,127,127, 31, 31,  0,  0,  0,  0,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112, 96, 96,  0,  0,  0, 
+//         0,127,127,127,127,127,127,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,127,127,127,127,127,127,
+//     };
+//     oled_write_raw_P(raw_logo, sizeof(raw_logo));
+// }
+
+// static void render_logo(void) {     // logo 1
+//     static const char PROGMEM raw_logo[] = {
+//         0,  0,  0,  0,  0,  0,240,248, 24, 24, 24, 24, 24,248,248, 24, 24, 24, 24, 24,240,224,  0,240,240, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,  0, 24, 24, 24, 24, 24, 24, 24,248,248, 24, 24, 24, 24, 24, 24, 24,  0,240,240, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,248,240,  0,248,248, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,240,240,  0,240,248,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,224,240, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,  0,  0,  0,  0,  0,  0,  0,  0,
+//         0,  0,  0,  0, 63, 63,  0,  0,  0,  0,  0, 63, 63,  0,  0,  0,  0,  0, 63, 63,  0, 63, 63, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,  0,  0,  0,  0,  0,  0,  0,  0, 63, 63,  0,  0,  0,  0,  0,  0,  0,  0, 63, 63,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3, 63, 63,  0, 63, 63, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 63, 63,  0, 63, 63, 32, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,  0, 31, 63, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,  0,  0,  0,  0,  0,  0,
+//     };
+//     oled_write_raw_P(raw_logo, sizeof(raw_logo));
+// }
+
+static void render_logo_font(void) {
+    static const char PROGMEM qmk_logo[] = {
+        0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x93, 0x94,
+        0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4,
+        0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0x00
+    };
+    oled_write_P(qmk_logo, false);
+}
+
+void render_info(void){
+
+    oled_set_cursor(0, 0);
+//     oled_write_P(PSTR("Layer: "), false);
+
+    switch (get_highest_layer(layer_state|default_layer_state)) {
+        case WIN_BASE:
+            oled_write_P(logo_MS, false);
+            oled_write_P(PSTR(" Layer: WINdows\n"), false);    
+            oled_write_P(logo_MS+3, false);      
+            oled_write_P(PSTR(" ---------------\n"), false);
+            break;
+        case WIN_FN:
+            oled_write_P(logo_MS, false);        
+            oled_write_P(PSTR(" Layer: WIN-FN\n"), false);
+            break;
+        case MAC_BASE:
+            oled_write_P(logo_APPLE, false);
+            oled_write_P(PSTR(" Layer: MACintosh\n"), false);
+            oled_write_P(logo_APPLE+3, false);        
+            oled_write_P(PSTR(" ---------------\n"), false);         
+            break;
+        case MAC_FN:
+            oled_write_P(logo_APPLE, false);        
+            oled_write_P(PSTR(" Layer: MAC-FN\n"), false);
+            break;
+        default:
+            // Or use the write_ln shortcut over adding '\n' to the end of your string
+            oled_write_ln_P(PSTR("error?"), false);
+    }
+//    oled_write_P(PSTR("---------------\n"), false);
+        oled_set_cursor(3, 2);   
+    // Host Keyboard LED Status
+    led_t led_state = host_keyboard_led_state();
+    oled_write_P(led_state.num_lock ? PSTR("NUM  ") : PSTR("     "), false);
+    oled_write_P(led_state.caps_lock ? PSTR("CAP  ") : PSTR("     "), false);
+    oled_write_P(led_state.scroll_lock ? PSTR("SCR  ") : PSTR("     "), false);
+}
+//---------------------------------------
+static void render_rgbled_status(void) {
+    char string[4];
+
+        oled_set_cursor(0, 3);   
+
+    if (rgb_matrix_is_enabled()) {       // RGB MAtrix용이 아니라 RGBLIGHT용?
+        oled_write("RGB on ", true);    
+        uint16_t m = rgb_matrix_get_mode();
+        string[3] = '\0';
+        string[2] = '0' + m % 10;
+        string[1] = ( m /= 10) % 10 ? '0' + (m) % 10 : (m / 10) % 10 ? '0' : ' ';
+        string[0] =  m / 10 ? '0' + m / 10 : ' ';
+        oled_write_P(PSTR(" - Conf:"), false);
+        oled_write(string, false);
+        // uint16_t h = rgb_matrix_get_hue()/RGBLIGHT_HUE_STEP;
+        // string[3] = '\0';
+        // string[2] = '0' + h % 10;
+        // string[1] = ( h /= 10) % 10 ? '0' + (h) % 10 : (h / 10) % 10 ? '0' : ' ';
+        // string[0] =  h / 10 ? '0' + h / 10 : ' ';
+        // oled_write_P(PSTR(","), false);
+        // oled_write(string, false);
+        // uint16_t s = rgb_matrix_get_sat()/RGBLIGHT_SAT_STEP;
+        // string[3] = '\0';
+        // string[2] = '0' + s % 10;
+        // string[1] = ( s /= 10) % 10 ? '0' + (s) % 10 : (s / 10) % 10 ? '0' : ' ';
+        // string[0] =  s / 10 ? '0' + s / 10 : ' ';
+        // oled_write_P(PSTR(","), false);
+        // oled_write(string, false);
+        // uint16_t v = rgb_matrix_get_val()/RGBLIGHT_VAL_STEP;
+        // string[3] = '\0';
+        // string[2] = '0' + v % 10;
+        // string[1] = ( v /= 10) % 10 ? '0' + (v) % 10 : (v / 10) % 10 ? '0' : ' ';
+        // string[0] =  v / 10 ? '0' + v / 10 : ' ';
+        // oled_write_P(PSTR(","), false);
+        // oled_write(string, false);
+        // oled_write_ln_P(PSTR("\n     MOD HUE SAT VAR"), false);    
+    } else {
+        oled_write_ln_P(PSTR("RGB off"), false);
+    }
+}
+
+// 참고키보드 = 0xcb-1377
 bool oled_task_user(void) {
 
-    render_logo();
-//  oled_scroll_right(); 이부분은 주석끄면 로고가 스크롤됩니다 안꺼도 config.h에서 준 시간 이후 스크롤됩니다
+ //   static bool finished_timer = false;
 
-
-    // oled_write_P(PSTR("Layer: "), false);
-
-    // switch (get_highest_layer(layer_state|default_layer_state)) {
-    //     case WIN_BASE:
-    //         oled_write_P(PSTR("WINdows\n"), false);
-    //         break;
-    //     case WIN_FN:
-    //         oled_write_P(PSTR("WIN-FN\n"), false);
-    //         break;
-    //     case MAC_BASE:
-    //         oled_write_P(PSTR("MACintosh\n"), false);
-    //         break;
-    //     case MAC_FN:
-    //         oled_write_P(PSTR("MAC-FN\n"), false);
-    //         break;
-    //     default:
-    //         // Or use the write_ln shortcut over adding '\n' to the end of your string
-    //         oled_write_ln_P(PSTR("error?"), false);
-    // }
-
-    // oled_write_P(PSTR("---------------\n"), false);
-
-    // // Host Keyboard LED Status
-    // led_t led_state = host_keyboard_led_state();
-    // oled_write_P(led_state.num_lock ? PSTR("NUM  ") : PSTR("     "), false);
-    // oled_write_P(led_state.caps_lock ? PSTR("CAP  ") : PSTR("     "), false);
-    // oled_write_P(led_state.scroll_lock ? PSTR("SCR  ") : PSTR("     "), false);
-
+    if (!finished_timer && (timer_elapsed(startup_timer) < 20000)) {
+//        render_logo();
+//        render_logo_font();  
+        oled_scroll_left(); // Turns on scrolling      // scroll하면 아래로 안감?             oled_scroll_off();을 먼저해야 함
+        render_logo_font();  
+    } else {
+        if (!finished_timer){
+            oled_scroll_off();
+            oled_clear();
+            finished_timer = true;
+        }
+        render_info();
+        oled_scroll_off();           
+        render_rgbled_status();
+    }
     return false;
 }
-// oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-//     return OLED_ROTATION_0;
-// }
 
 #endif
 //----------------------------------

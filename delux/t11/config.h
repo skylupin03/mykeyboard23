@@ -12,6 +12,8 @@
 
 #define DIODE_DIRECTION ROW2COL
 
+#define DYNAMIC_KEYMAP_LAYER_COUNT 6
+
 //#define WAIT_US_TIMER           GPTD3
 //#define STM32_GPT_USE_TIM3 TRUE		// Board 디렉토리 파일에 디파인 있음
 
@@ -43,7 +45,7 @@
 #define ENCODERS_PAD_B { B9 }  // pin 26, 38
 
 /* Specifies the number of pulses the encoder registers between each detent */
-#define ENCODER_RESOLUTION 2       //#define ENCODER_RESOLUTIONS { 2, 2 }  //4
+#define ENCODER_RESOLUTION 1       //#define ENCODER_RESOLUTIONS { 2, 2 }  //4
 //#define ENCODER_DIRECTION_FLIP
 //#define ENCODER_DEFAULT_POS 0x3
 
@@ -132,8 +134,8 @@
 
 #ifdef RGB_MATRIX_ENABLE
 // DRIVER_LED_TOTAL --> RGB_MATRIX_LED_COUNT
-#define RGB_MATRIX_LED_COUNT 28      // for RGB matrix //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
-    #define RGBLED_NUM 28
+#define RGB_MATRIX_LED_COUNT 29       // for RGB matrix //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
+    #define RGBLED_NUM 29
 #define RGB_MATRIX_STARTUP_VAL 50
 #define LED_MATRIX_CENTER {29, 31}
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
@@ -141,7 +143,7 @@
 #define RGB_DISABLE_WHEN_USB_SUSPENDED  // turn off effects when suspended
 
 //#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_CYCLE_LEFT_RIGHT
-
+// 
 #define ENABLE_RGB_MATRIX_ALPHAS_MODS
 #define ENABLE_RGB_MATRIX_GRADIENT_UP_DOWN
 #define ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
@@ -355,7 +357,7 @@
 #define OLED_TIMEOUT 20000              // Turns off OLED after said amount of milliseconds
 #define OLED_BRIGHTNESS 255
 //#define OLED_DISPLAY_128X64           // 0.91inch = 128x32, 0.96inch(1.3inch) = 128x64
-#define OLED_FONT_END 255
+//#define OLED_FONT_END 255         //error: static assertion failed: "OLED_FONT_END references outside array"
 #define OLED_FONT_H "gfxfont.c"
 //#define OLED_UPDATE_INTERVAL 33 // ~30fps
 

@@ -24,5 +24,9 @@ terrazzo ; terrazzo를 K20에 이식하여 동작을 검토함
 METABLE K310       = 0xF010
 METABLE K310 LED = 0xF011
 METABLE K310 RGB = 0xF012?
+
 METABLE K30 RGB = 0xF020		(1 encoder)
 METABLE K20 RGB = 0xF021           (waycos에서 개발했던것 2 encoder)
+
+METABLE Designer T11 RGB = 0xF030  (Delux 한손키보드, 1 encoder, oled)
+METABLE Designer T12 RGB = 0xF032  (Delux 한손키보드, no encoder)

@@ -29,11 +29,11 @@ WPM_ENABLE = yes
 TAP_DANCE_ENABLE = yes      # Tappa Dance
 
 #UNICODE_ENABLE = yes        # Unicode
-#ENCODER_ENABLE = yes        # Enable Encoder
+ENCODER_ENABLE = yes        # Enable Encoder
 ENCODER_MAP_ENABLE = yes
 #DIP_SWITCH_ENABLE = yes
 
-#OLED_ENABLE = yes
+OLED_ENABLE = yes
 #OLED_DRIVER = SSD1306		# default값이라 필요없는듯
 
 #BACKLIGHT_ENABLE = yes       # Enable keyboard backlight functionality

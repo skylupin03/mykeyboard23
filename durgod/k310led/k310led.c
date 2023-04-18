@@ -196,7 +196,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                         writePinHigh(LED_MR_LOCK_PIN);
                         break;
                         
-
         case QK_BOOT:
             if (record->event.pressed) {
                 // Flash LEDs to indicate bootloader mode is enabled.
