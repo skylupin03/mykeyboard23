@@ -49,7 +49,7 @@ TAP_DANCE_ENABLE = yes      # Tappa Dance
 
 ##EEPROM_DRIVER = transient
 
-#OLED_ENABLE = yes
+OLED_ENABLE = yes			# +5568(0x15C0)byte
 #OLED_DRIVER = SSD1306		# default값이라 필요없는듯
 
 #간간히 OLED가 동작안하는 문제 해결?

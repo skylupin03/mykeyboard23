@@ -184,58 +184,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   )
 };
 
-#ifdef OLED_ENABLE
-bool oled_task_user(void) {
-    // Host Keyboard Layer Status
- //   oled_write_P(PSTR("Layer: "), false);
-
-//    switch (get_highest_layer(layer_state)) {           // layer_state -> MAC_BASE일떄 WIN_BASE로 체크되는 문제
-     switch (get_highest_layer(default_layer_state)) {    // default_layer_state -> FN layer는 체크되지 않는 문제
-        case WIN_BASE:                                    // Booting떄 초기화루틴에서는 잘못 가져옴
-            oled_write_P(PSTR(" Windows Mode \n"), false);
-//            default_layer_set(1UL << 0);
-//            set_single_persistent_default_layer(0);
-//            layer_off(2);
-//            layer_on(0);
-            writePinHigh(LED_MR_LOCK_PIN);
-            break;
-        case WIN_FN:
-            oled_write_P(PSTR(" Win-Function \n"), false);
-            break;
-        case MAC_BASE:
-            oled_write_P(PSTR(" Macintosh Mode\n"), true);
-//            default_layer_set(1UL << 2);
-//            set_single_persistent_default_layer(2);
-//            layer_off(0);
-//            layer_on(2);
-            writePinLow(LED_MR_LOCK_PIN);
-            break;
-        case MAC_FN:
-            oled_write_P(PSTR(" MAC-Function \n"), true);
-            break;
-        default:
-            // Or use the write_ln shortcut over adding '\n' to the end of your string
-            oled_write_ln_P(PSTR("Undefined"), false);
-    }
-
-    oled_write_P(PSTR("---------------\n"), false);
-    // Host Keyboard LED Status
-    led_t led_state = host_keyboard_led_state();
-    oled_write_P(led_state.num_lock ? PSTR("NUM ") : PSTR("    "), false);
-    oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
-    oled_write_P(led_state.scroll_lock ? PSTR("SCR ") : PSTR("    "), false);
-
-    oled_write_P(PSTR("-"), false);
-
-    oled_write_P(IS_LAYER_ON(0) ? PSTR("1 ") : PSTR("0 "), false);
-    oled_write_P(IS_LAYER_ON_STATE(layer_state,1) ? PSTR("1 ") : PSTR("0 "), false);
-    oled_write_P(IS_LAYER_ON_STATE(layer_state,2) ? PSTR("1 ") : PSTR("0 "), false);
-    oled_write_P(IS_LAYER_ON_STATE(layer_state,3) ? PSTR("1 ") : PSTR("0 "), false);
-
-    return false;
-}
-#else
-
 bool isRecording = false;           // dynamic macro LED
 bool isRecordingLedOn = false;
 static uint16_t recording_timer;
@@ -277,30 +225,6 @@ void matrix_scan_user(void) {
             soft_reset_keyboard();      // reset_keyboard()
         }
     }
-
-    /*
-     switch (get_highest_layer(default_layer_state)) {    // default_layer_state -> FN layer는 체크되지 않는 문제
-        case WIN_BASE:
-        case WIN_FN:                                // Booting떄 초기화루틴에서는 잘못 가져옴
-//            default_layer_set(1UL << 0);
-//            set_single_persistent_default_layer(0);
-//            layer_off(2);
-//            layer_on(0);
-            writePinHigh(LED_MR_LOCK_PIN);
-
-
-            break;
-        case MAC_BASE:
-        case MAC_FN:
-//            default_layer_set(1UL << 2);
-//            set_single_persistent_default_layer(2);
-//            layer_off(0);
-//            layer_on(2);
-            writePinLow(LED_MR_LOCK_PIN);
-
-            break;
-    }
-    */
     if (get_autoshift_state()){
         if(isAutoShiftOn){
             if(timer_elapsed(AutoShift_timer) >500){
@@ -342,7 +266,6 @@ void matrix_scan_user(void) {
 //            writePin(LED_WIN_LOCK_PIN, !win_key_locked);       
     }
 }
-#endif
 
 void dynamic_macro_record_start_user(void) {
     isRecording = true;
@@ -391,24 +314,314 @@ bool rgb_matrix_indicators_user(void)
     return TRUE;
 }
 
-/*  레이어 인식을 잘 못함 
-layer_state_t layer_state_set_user(layer_state_t state) {
-    if (layer_state_cmp(state, MAC_BASE)||layer_state_cmp(state,MAC_FN)) {
-        autoshift_disable();
-//        autoshift_enable();        
-                        writePinHigh(LED_MR_LOCK_PIN);
-
-    } else { 
-        autoshift_enable();  
-                                writePinLow(LED_MR_LOCK_PIN);   
-    }
-    return state;
-} */
-
-void ieader_start_user(void){
+void leader_start_user(void){
 //    writePinLow(LED_MR_LOCK_PIN); //동작안함
 }
 
 void leader_end_user(void){
 //    writePinHigh(LED_MR_LOCK_PIN); //동작안함
 }
+//---------------------------------------------------------------------------
+
+#ifdef OLED_ENABLE
+
+// uint16_t startup_timer;
+// static bool finished_timer = false;
+
+static const char logo_MS[] = {0x97,0x98,0x00, 0xB7,0xB8,0x00}; 
+static const char logo_APPLE[] = {0x95,0x96,0x00, 0xB5,0xB6,0x00};
+static const char logo_Linux[] = {0x99,0x9A,0x00, 0xB9,0xBA,0x00}; 
+
+// void init_timer(void){
+//    startup_timer = timer_read32();
+// };
+
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    startup_timer = timer_read();
+    return rotation;                    //    return OLED_ROTATION_180; // flips the display 180 degrees if offhand 
+}
+
+// static void render_logo(void) {
+//     static const char PROGMEM raw_logo[] = {
+//         240,248,252,252,254,254,222,206,238,238,238,238,238,206,206, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,254,254,252,252,248,248,  0,  0,  0,  0, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,  0,  0,  0,  0,254,254,254,254,254,254,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+//         0,254,254,254,254,254,254,255,255,255,255,255,255,  1,  1,  1,  3,  3,  3,  3,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,255,255,255,255,255,255,  0,  0,  0,  0, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 24,  0,  0,  0,  0,255,255,255,255,255,255, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
+//         60,255,255,255,255,255,255, 31, 63, 63,127,127,127,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,127,127,127,127, 31, 31,  0,  0,  0,  0,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112, 96, 96,  0,  0,  0, 
+//         0,127,127,127,127,127,127,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,112,127,127,127,127,127,127,
+//     };
+//     oled_write_raw_P(raw_logo, sizeof(raw_logo));
+// }
+
+// static void render_logo(void) {     // logo 1
+//     static const char PROGMEM raw_logo[] = {
+//         0,  0,  0,  0,  0,  0,240,248, 24, 24, 24, 24, 24,248,248, 24, 24, 24, 24, 24,240,224,  0,240,240, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,  0, 24, 24, 24, 24, 24, 24, 24,248,248, 24, 24, 24, 24, 24, 24, 24,  0,240,240, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,248,240,  0,248,248, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,240,240,  0,240,248,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,224,240, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,  0,  0,  0,  0,  0,  0,  0,  0,
+//         0,  0,  0,  0, 63, 63,  0,  0,  0,  0,  0, 63, 63,  0,  0,  0,  0,  0, 63, 63,  0, 63, 63, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,  0,  0,  0,  0,  0,  0,  0,  0, 63, 63,  0,  0,  0,  0,  0,  0,  0,  0, 63, 63,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3, 63, 63,  0, 63, 63, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 63, 63,  0, 63, 63, 32, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,  0, 31, 63, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,  0,  0,  0,  0,  0,  0,
+//     };
+//     oled_write_raw_P(raw_logo, sizeof(raw_logo));
+// }
+
+static void render_logo_font(void) {
+    static const char PROGMEM qmk_logo[] = {
+        0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x93, 0x94,
+        0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4,
+        0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0x00
+    };
+    oled_write_P(qmk_logo, false);
+}
+
+void render_info(void){
+
+    oled_set_cursor(0, 0);
+//     oled_write_P(PSTR("Layer: "), false);
+
+    switch (get_highest_layer(layer_state|default_layer_state)) {
+        case WIN_BASE:
+            oled_write_P(logo_MS, false);
+            oled_write_P(PSTR(" Layer: WINdows\n"), false);    
+            oled_write_P(logo_MS+3, false);      
+            oled_write_ln_P(PSTR(" ---------------"), false);       // oled_write_ln_P 함수 테스트
+            break;
+        case WIN_FN:
+            oled_write_P(logo_MS, false);        
+            oled_write_P(PSTR(" Layer: WIN-FN\n"), false);
+            break;
+        case MAC_BASE:
+            oled_write_P(logo_APPLE, false);
+            oled_write_P(PSTR(" Layer: MACintosh\n"), false);
+            oled_write_P(logo_APPLE+3, false);        
+            oled_write_P(PSTR(" ---------------\n"), false);         
+            break;
+        case MAC_FN:
+            oled_write_P(logo_APPLE, false);        
+            oled_write_P(PSTR(" Layer: MAC-FN\n"), false);
+            break;
+
+        case LINUX_BASE:
+            oled_write_P(logo_Linux, false);
+            oled_write_P(PSTR(" Layer: Linux\n"), false);
+            oled_write_P(logo_Linux+3, false);        
+            oled_write_P(PSTR(" ---------------\n"), false);         
+            break;
+        case LINUX_FN:
+            oled_write_P(logo_Linux, false);        
+            oled_write_P(PSTR(" Layer: Linux-FN\n"), false);
+            break;            
+        default:
+            // Or use the write_ln shortcut over adding '\n' to the end of your string
+            oled_write_ln_P(PSTR("error?"), false);
+    }
+//    oled_write_P(PSTR("---------------\n"), false);
+        oled_set_cursor(3, 2);   
+    // Host Keyboard LED Status
+    led_t led_state = host_keyboard_led_state();
+    oled_write_P(led_state.num_lock ? PSTR("NUM  ") : PSTR("     "), false);
+    oled_write_P(led_state.caps_lock ? PSTR("CAP  ") : PSTR("     "), false);
+    oled_write_P(led_state.scroll_lock ? PSTR("SCR  ") : PSTR("     "), false);
+}
+//---------------------------------------
+static void render_rgbled_status(void) {
+    char string[4];
+
+    oled_set_cursor(0, 3);   
+    if (rgb_matrix_is_enabled()) {
+        oled_write("RGB", true);    
+        uint16_t m = rgb_matrix_get_mode();
+        string[3] = '\0';
+        string[2] = '0' + m % 10;
+        string[1] = ( m /= 10) % 10 ? '0' + (m) % 10 : (m / 10) % 10 ? '0' : ' ';
+        string[0] =  m / 10 ? '0' + m / 10 : ' ';
+        oled_write_P(PSTR(" -"), false);
+        oled_write(string, false);
+
+        uint16_t h = rgb_matrix_get_hue()/RGBLIGHT_HUE_STEP;
+        string[3] = '\0';
+        string[2] = '0' + h % 10;
+        string[1] = ( h /= 10) % 10 ? '0' + (h) % 10 : (h / 10) % 10 ? '0' : ' ';
+        string[0] =  h / 10 ? '0' + h / 10 : ' ';
+        oled_write_P(PSTR(","), false);
+        oled_write(string, false);
+
+        uint16_t s = rgb_matrix_get_sat()/RGBLIGHT_SAT_STEP;
+        string[3] = '\0';
+        string[2] = '0' + s % 10;
+        string[1] = ( s /= 10) % 10 ? '0' + (s) % 10 : (s / 10) % 10 ? '0' : ' ';
+        string[0] =  s / 10 ? '0' + s / 10 : ' ';
+        oled_write_P(PSTR(","), false);
+        oled_write(string, false);
+
+        uint16_t v = rgb_matrix_get_val()/RGBLIGHT_VAL_STEP;
+        string[3] = '\0';
+        string[2] = '0' + v % 10;
+        string[1] = ( v /= 10) % 10 ? '0' + (v) % 10 : (v / 10) % 10 ? '0' : ' ';
+        string[0] =  v / 10 ? '0' + v / 10 : ' ';
+        oled_write_P(PSTR(","), false);
+        oled_write(string, false);
+        // oled_write_ln_P(PSTR("\n     MOD HUE SAT VAR"), false);    
+    } else {
+        oled_write_P(PSTR("RGB off , WPM = "), false);
+            oled_write(get_u8_str(get_current_wpm(), '0'), false);  //예제 키보드= adpenrose-akemipad
+    }
+}
+
+// 참고키보드 = 0xcb-1377, 0xcb-STATIC, adafruit-macropad
+bool oled_task_user(void) {
+
+ //   static bool finished_timer = false;
+
+    if (!finished_timer && (timer_elapsed(startup_timer) < 20000)) {
+//        render_logo();
+        render_logo_font();  
+        oled_scroll_left(); // Turns on scrolling      // scroll하면 아래로 안감? oled_scroll_off();을 먼저해야 함
+    } else {
+        if (!finished_timer){
+//            oled_scroll_off();
+            oled_clear();
+            finished_timer = true;
+        }
+        render_info();
+        oled_scroll_off();        
+        render_rgbled_status();
+    }
+    return false;
+}
+
+/* 1upkeyboard-pi40
+   switch (rgb_matrix_get_mode()) {
+        case 1:
+            oled_write_P(PSTR("Solid Color\n                  "), false);
+            break;
+        case 2:
+            oled_write_P(PSTR("Alphas Mods\n                  "), false);
+            break;
+        case 3:
+            oled_write_P(PSTR("Gradient Up Down\n                  "), false);
+            break;
+        case 4:
+            oled_write_P(PSTR("Gradient Left Right\n                  "), false);
+            break;
+        case 5:
+            oled_write_P(PSTR("Breathing\n                  "), false);
+            break;
+        case 6:
+            oled_write_P(PSTR("Band Sat\n                  "), false);
+            break;
+        case 7:
+            oled_write_P(PSTR("Band Val\n                  "), false);
+            break;
+        case 8:
+            oled_write_P(PSTR("Band Pinwheel Sat\n                  "), false);
+            break;
+        case 9:
+            oled_write_P(PSTR("Band Pinwheel Val\n                  "), false);
+            break;
+        case 10:
+            oled_write_P(PSTR("Band Spiral Sat\n                  "), false);
+            break;
+        case 11:
+            oled_write_P(PSTR("Band Spiral Val\n                  "), false);
+            break;
+        case 12:
+            oled_write_P(PSTR("Cycle All\n                  "), false);
+            break;
+        case 13:
+            oled_write_P(PSTR("Cycle Left Right\n                  "), false);
+            break;
+        case 14:
+            oled_write_P(PSTR("Cycle Up Down\n                  "), false);
+            break;
+        case 15:
+            oled_write_P(PSTR("Rainbow\nMoving Chevron    "), false);
+            break;
+        case 16:
+            oled_write_P(PSTR("Cycle Out In\n                  "), false);
+            break;
+        case 17:
+            oled_write_P(PSTR("Cycle Out In Dual\n                  "), false);
+            break;
+        case 18:
+            oled_write_P(PSTR("Cycle Pinwheel\n                  "), false);
+            break;
+        case 19:
+            oled_write_P(PSTR("Cycle Spiral\n                  "), false);
+            break;
+        case 20:
+            oled_write_P(PSTR("Dual Beacon\n                  "), false);
+            break;
+        case 21:
+            oled_write_P(PSTR("Rainbow Beacon\n                  "), false);
+            break;
+        case 22:
+            oled_write_P(PSTR("Rainbow Pinwheels\n                  "), false);
+            break;
+        case 23:
+            oled_write_P(PSTR("Raindrops\n                  "), false);
+            break;
+        case 24:
+            oled_write_P(PSTR("Jellybean Raindrops\n                  "), false);
+            break;
+        case 25:
+            oled_write_P(PSTR("Hue Breathing\n                  "), false);
+            break;
+        case 26:
+            oled_write_P(PSTR("Hue Pendulum\n                  "), false);
+            break;
+        case 27:
+            oled_write_P(PSTR("Hue Wave\n                  "), false);
+            break;
+        case 28:
+            oled_write_P(PSTR("Pixel Rain\n                  "), false);
+            break;
+        case 29:
+            oled_write_P(PSTR("Pixel Flow\n                  "), false);
+            break;
+        case 30:
+            oled_write_P(PSTR("Pixel Fractal\n                  "), false);
+            break;
+        case 31:
+            oled_write_P(PSTR("Typing Heatmap\n                  "), false);
+            break;
+        case 32:
+            oled_write_P(PSTR("Digital Rain\n                  "), false);
+            break;
+        case 33:
+            oled_write_P(PSTR("Solid Reactive\nSimple            "), false);
+            break;
+        case 34:
+            oled_write_P(PSTR("Solid Reactive\n                  "), false);
+            break;
+        case 35:
+            oled_write_P(PSTR("Solid Reactive\nWide              "), false);
+            break;
+        case 36:
+            oled_write_P(PSTR("Solid Reactive\nMultiwide         "), false);
+            break;
+        case 37:
+            oled_write_P(PSTR("Solid Reactive\nCross             "), false);
+            break;
+        case 38:
+            oled_write_P(PSTR("Solid Reactive\nMulticross        "), false);
+            break;
+        case 39:
+            oled_write_P(PSTR("Solid Reactive\nNexus             "), false);
+            break;
+        case 40:
+            oled_write_P(PSTR("Solid Reactive\nMultinexus        "), false);
+            break;
+        case 41:
+            oled_write_P(PSTR("Splash\n                  "), false);
+            break;
+        case 42:
+            oled_write_P(PSTR("Multisplash\n                  "), false);
+            break;
+        case 43:
+            oled_write_P(PSTR("Solid Splash\n                  "), false);
+            break;
+        case 44:
+            oled_write_P(PSTR("Solid Multisplash\n                  "), false);
+            break;
+        default:
+            // Or use the write_ln shortcut over adding '\n' to the end of your string
+            oled_write_ln_P(PSTR("Undefined\n                  "), false);
+    }
+*/
+#endif
+//----------------------------------
