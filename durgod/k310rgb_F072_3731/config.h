@@ -86,74 +86,8 @@
 //#define LEADER_NO_TIMEOUT
 
 //-------------------------------------------------------------------------------
-/* RGB Underglow or WS2812 RGB Matirx */
-#define RGB_DI_PIN B15    // The pin connected to the data pin of the LEDs
-
-#ifdef RGB_DI_PIN
-//pwm driver
-    // #define WS2812_PWM_DRIVER PWMD1
-    // #define WS2812_PWM_CHANNEL 3
-    // #define WS2812_PWM_PAL_MODE 1                   // 2 <- 072?
-    // #define WS2812_PWM_COMPLEMENTARY_OUTPUT         // Define for a complementary timer output (TIMx_CHyN); omit for a normal timer output (TIMx_CHy).
-    // #define WS2812_DMA_STREAM STM32_DMA2_STREAM5    // TIM1_UP = STM32_DMA2_STREAM5  / TIM1_CH3 = STM32_DMA2_STREAM6
-    // #define WS2812_DMA_CHANNEL 6                    // 2
-    // //#define WS2812_DMAMUX_ID STM32_DMAMUX1_TIM2_UP // DMAMUX configuration for TIMx_UP -- only required if your MCU has a DMAMUX peripheral, see the respective reference manual for the appropriate values for your MCU.
-    // //#define WS2812_PWM_TARGET_PERIOD 800000
-//spi driver
-    #define WS2812_SPI                  SPID2
-    #define WS2812_SPI_MOSI_PAL_MODE    0      // 0 for F072, 5 for F4x1(F103?) // MOSI pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 5   
-     #define WS2812_SPI_SCK_PIN       B13     //
-     #define WS2812_SPI_SCK_PAL_MODE  5       // F072, enable = 0 / F401 enable = 5  (disable은 반대인가?)  (enable되어도 매트릭스 할당되면 매트릭스로 동작함)
-    #define WS2812_SPI_DIVISOR	        16      //4 4와 8만 되나?       //16    
-    
-    /* F4x1 */
-    // #define WS2812_SPI_MOSI_PAL_MODE    5      // MOSI pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 5   // 0 for F072
-    // // #define WS2812_SPI_SCK_PIN       B13     //for F072?
-    // // #define WS2812_SPI_SCK_PAL_MODE  0       //for F072?
-    // #define WS2812_SPI_DIVISOR	        8      //4 4와 8만 되나?       //16
-
-    #define WS2812_SPI_USE_CIRCULAR_BUFFER    // fix Fliker (이 기능을 켜면 access가 많아짐)
-
-// #define LED_LAYOUT(
-// )
-
-
-//RGB LED Conversion macro from physical array to electric array (+146). This results in better looking animated effects.
-//First section is the LED matrix, second section is the electrical wiring order, and the third section is the desired mapping
-/*
-#define LED_LAYOUT( \  // error
-    0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,  \
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, \
-    42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, \
-    63, 43, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, \
-    84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,100,101,102,103,104, \
-   105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125, \
-   126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146, \
-   147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167) \
-  { \
-    0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,  \
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, \
-    42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, \
-    63, 43, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, \
-    84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,100,101,102,103,104, \
-   105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125, \
-   126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146, \
-   147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167  \
-  }
-#define RGBLIGHT_LED_MAP LED_LAYOUT(  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, \
-                           41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, \
-                           42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, \
-                           83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, \
-                           84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,100,101,102,103,104, \
-                          125,124,123,122,121,120,119,118,117,116,115,114,113,112,111,110,109,108,107,106,105, \
-                          126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146, \
-                          167,166,165,164,163,162,161,160,159,158,157,156,155,154,153,152,151,150,149,148,147 )
-*/
-//#define WS2812_BYTE_ORDER WS2812_BYTE_ORDER_RGB
-#endif
-//-------------------------------------------
 #ifdef RGB_MATRIX_ENABLE
-/*
+
 #    define DRIVER_ADDR_1 0b1110111
 #    define DRIVER_ADDR_2 0b1110100
 #    define DRIVER_ADDR_3 0b1110101
@@ -172,26 +106,15 @@
 #    define RGB_MATRIX_LED_PROCESS_LIMIT 18
 #    define RGB_MATRIX_LED_FLUSH_LIMIT 16
 #    define RGB_DISABLE_AFTER_TIMEOUT 0          // number of ticks to wait until disabling effects
-*/
-
-// DRIVER_LED_TOTAL --> RGB_MATRIX_LED_COUNT
-#define RGB_MATRIX_LED_COUNT 168    //147       // for RGB matrix //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
-    #define RGBLED_NUM 168      //147          // 이값이위와 틀리니 USB가 끊어짐?
-
-#define RGB_MATRIX_DEFAULT_VAL 20           //#define RGB_MATRIX_STARTUP_VAL 50
-#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200
-#define RGB_MATRIX_CENTER { 105, 30 }
-#define RGB_MATRIX_FRAMEBUFFER_EFFECTS
-#define RGB_MATRIX_KEYPRESSES
-#define RGB_DISABLE_WHEN_USB_SUSPENDED  // turn off effects when suspended
-
-#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_ALPHAS_MODS
+#    define RGB_DISABLE_WHEN_USB_SUSPENDED       // turn off effects when suspended
+#    define RGB_MATRIX_KEYPRESSES
+#    define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200
+//#    define RGB_MATRIX_CENTER { 103, 32 }
 
 /*
 // RGB Matrix Animation modes. Explicitly enabled
 // For full list of effects, see:
 // https://docs.qmk.fm/#/feature_rgb_matrix?id=rgb-matrix-effects
-
 #    define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_CYCLE_LEFT_RIGHT // Sets the default mode, if none has been set
 
 #    define ENABLE_RGB_MATRIX_BREATHING           // Single hue brightness cycling animation
@@ -334,18 +257,17 @@
 /*  OLED Configulation */
 // #define OLED_DISPLAY_ADDRESS 0x3C
 // #define OLED_COM_PINS 0x12           // 크기가 작아짐.. 어디다 사용? 128x64에 사용하는 건가? 뭐지?
+// #define OLED_IC OLED_IC_SSD1306      //안해도 default로 되어 있는듯
 
-// #define OLED_IC OLED_IC_SSD1306      //안해도 default는 SSD1306
-
-/* Required for SH1106 Oled Driver */
-//#define OLED_IC OLED_IC_SH1106      // YwRobot 1.3inch
+/* Required for SH1106 Oled Driver (ex; YwRobot 1.3inch) */
+//#define OLED_IC OLED_IC_SH1106      //
 //#define OLED_COLUMN_OFFSET 2        // SH1106 screen is a little off to the left
+
 /* Default Oled init */
-#define OLED_TIMEOUT 20000              // Turns off OLED after said amount of milliseconds
-#define OLED_BRIGHTNESS 255
-//#define OLED_DISPLAY_128X64           // 0.91inch = 128x32, 0.96inch(1.3inch) = 128x64
-//#define OLED_FONT_END 255         //error: static assertion failed: "OLED_FONT_END references outside array"
-#define OLED_FONT_H "gfxfont.c"
+//#define OLED_TIMEOUT 20000              // Turns off OLED after said amount of milliseconds
+//#define OLED_DISPLAY_128X64
+//#define OLED_BRIGHTNESS 255
+
 //#define OLED_UPDATE_INTERVAL 33 // ~30fps
 #endif
 

@@ -16,19 +16,25 @@
 
 #pragma once
 
-#define HAL_USE_PAL                 TRUE
-#define PAL_USE_CALLBACKS           TRUE
+#include_next <mcuconf.h>
 
-//#define HAL_USE_GPT           TRUE
-//#define STM32_GPT_USE_TIM3    TRUE
+/* enable TIM1, used for backlight PWM */
+//#undef STM32_PWM_USE_TIM1
+//#define STM32_PWM_USE_TIM1                  TRUE
 
-/* enable I2C, used for OLED & 3731 LED Driver */
-#define HAL_USE_I2C TRUE      // 이전과 다르게 I2C를 사용안하면  꺼야 컴파일 에러가 없음
+/* enable TIM2, used for underglow PWM driver */
+//#undef STM32_PWM_USE_TIM2
+//#define STM32_PWM_USE_TIM2                  TRUE
 
-/* enable SPI, used for WS2812underglow(RGB BackLight)/WS2812 RGB-Matrix SPI driver */
-#define HAL_USE_SPI TRUE
+#undef STM32_GPT_USE_TIM3
+#define STM32_GPT_USE_TIM3                  TRUE
 
-/* enable PWM, used for BackLight/WS2812 underglow(RGB BackLight)/WS2812 RGB-Matrix PWM driver */
-#define HAL_USE_PWM TRUE
+#undef STM32_I2C_USE_I2C1
+#define STM32_I2C_USE_I2C1 TRUE
+//#undef STM32_I2C_USE_DMA
+//#define STM32_I2C_USE_DMA FALSE
 
-#include_next <halconf.h>
+#undef STM32_I2C_I2C1_RX_DMA_STREAM
+#undef STM32_I2C_I2C1_TX_DMA_STREAM
+#define STM32_I2C_I2C1_RX_DMA_STREAM STM32_DMA_STREAM_ID(1, 3)  // 7
+#define STM32_I2C_I2C1_TX_DMA_STREAM STM32_DMA_STREAM_ID(1, 2)  // 6

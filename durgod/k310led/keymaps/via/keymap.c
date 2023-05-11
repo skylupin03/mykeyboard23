@@ -142,7 +142,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
    */
   [WIN_FN] = LAYOUT_all( /* Function Layer */
-      QK_BOOT,          TD(TD_2),TD(TD_5), KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_TASK,TD(TD_3),TD(TD_4), KC_BRIU, KC_BRID,     _______, NK_ON, NK_OFF,
+      QK_BOOT,          TD(TD_2),TD(TD_5), KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,KC_TASK,TD(TD_3),TD(TD_4), KC_BRIU, KC_BRID,    _______,    NK_ON, NK_OFF,
       DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, _______, _______,  EE_CLR,    BL_ON,   BL_TOGG, BL_STEP,    KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
       _______, _______, KC_WINM, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,  QK_RBT,    BL_OFF,  BL_BRTG, KC_STER,    KC_BTN4, KC_MS_U,  KC_BTN5, KC_WH_U,
       CL_SWAP, DT_DOWN, DT_UP, _______, DT_PRNT, _______, _______, _______, _______, QK_LOCK, _______,  _______, _______, _______,                                 KC_MS_L, KC_BTN3,  KC_MS_R,
@@ -374,9 +374,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-void rgb_matrix_indicators_user(void)
-{
+// void rgb_matrix_indicators_user(void)
+// {
 
+// }
+
+bool rgb_matrix_indicators_user(void)
+{
+    return TRUE;
 }
 
 /*  레이어 인식을 잘 못함 

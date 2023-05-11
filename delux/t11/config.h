@@ -41,11 +41,11 @@
 //#define BUTTON_EXT_PIN	C15         // 임시로 엔코더 버튼 사용
 
 /* Encoder used pins */
-#define ENCODERS_PAD_A { B8 }  // pin 25, 27
-#define ENCODERS_PAD_B { B9 }  // pin 26, 38
+#define ENCODERS_PAD_A { B6 }  // B8        pin 25, 27
+#define ENCODERS_PAD_B { B7 }  // B9        pin 26, 38
 
 /* Specifies the number of pulses the encoder registers between each detent */
-#define ENCODER_RESOLUTION 1       //#define ENCODER_RESOLUTIONS { 2, 2 }  //4
+#define ENCODER_RESOLUTION 2       //#define ENCODER_RESOLUTIONS { 2, 2 }  //4
 //#define ENCODER_DIRECTION_FLIP
 //#define ENCODER_DEFAULT_POS 0x3
 
@@ -56,7 +56,7 @@
 // Dynamic EEPROM
 // Something sensible or else VIA may crash
 // Users may enable more if they wish
-// #define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  4095
+#define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  1023     // 4095 에서 error, > 1024-1
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
@@ -327,9 +327,9 @@
 #endif
 
 /* I2C driver overrides */
-//#define I2C_DRIVER I2CD1
-//#define I2C1_SCL_PIN B6
-//#define I2C1_SDA_PIN B7
+#define I2C_DRIVER I2CD1
+#define I2C1_SCL_PIN B8     //B6        // 마이컴 불량으로 추정되는데, I2C 전압이 2V로 떨어져서 동작안됨. I2C 핀을 엔코더 GPIO와 바꿈
+#define I2C1_SDA_PIN B9     //B7
 
 // < for STM32F072 >
 //#define I2C1_SCL_PAL_MODE 1

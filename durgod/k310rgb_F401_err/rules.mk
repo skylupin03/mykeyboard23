@@ -1,17 +1,20 @@
 # Default to K310 variant, since it will also work on a K320
-# DEFAULT_FOLDER=0skyupin/durgod/k310rgb     -last
+# DEFAULT_FOLDER=skylupin03/tauchef2/k310rgb     -last
 
 # MCU name (Actually F070, but close enough)
-MCU = STM32F072
-#MCU = STM32F401
+#MCU = STM32F072
+MCU = STM32F401
+
 
 # This file intentionally left blank
 #BOARD = GENERIC_STM32_F072XB
-BOARD = DURGOD_STM32_F070
+#BOARD = DURGOD_STM32_F070
 #BOARD = BLACKPILL_STM32_F401
 #BOAED = GENERIC_STM32_F401XC
 #BOAED = ST_NUCLEO64_F401RE
-#BOAED = TAUCHEF_STM32_F401		# 삭제해도 됨 기본클럭 및 PLL설정이 8M로 되어 있음
+
+# 삭제해도 됨 기본클럭 및 PLL설정이 8M로 되어 있음
+#BOAED = TAUCHEF_STM32_F401
 
 # Bootloader selection
 BOOTLOADER = stm32-dfu
@@ -24,15 +27,8 @@ EXTRAKEY_ENABLE = yes       # Audio control and System control(+450)
 CONSOLE_ENABLE = no         # Console for debug(+400)
 COMMAND_ENABLE = no         # Commands for debug and configuration
 NKRO_ENABLE = yes           # Enable N-Key Rollover
-BACKLIGHT_ENABLE = no       	# Enable keyboard backlight functionality
-#BACKLIGHT_DRIVER = pwm	     	# pwm, software, custom or no
-LED_MATRIX_ENABLE = no				#
-#LED_MATRIX_DRIVER = IS31FL3731		#
-RGBLIGHT_ENABLE = no        # Enable keyboard RGB underglow (WS2811, WS2812, WS2812B, WS2812C, SK6812, SK6812MINI, SK6805, APA102)
-RGB_MATRIX_ENABLE = yes			#
-RGB_MATRIX_DRIVER = WS2812		# IS31FL3731, 3733, 3737, WS2812등등 (WS2811, WS2812, WS2812B, WS2812C, SK6812, SK6812MINI, SK6805, APA102)
-WS2812_DRIVER = spi				# bitbang, spi(circular buffer issue), pwm(too much access, Noise도 심한듯)
-
+BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
+RGBLIGHT_ENABLE = no        # Enable keyboard RGB underglow
 AUDIO_ENABLE = no           # Audio output
 LTO_ENABLE = yes
 
@@ -43,14 +39,19 @@ WPM_ENABLE = yes
 
 TAP_DANCE_ENABLE = yes      # Tappa Dance
 
-#ENCODER_ENABLE = yes        # Enable Encoder
-#ENCODER_MAP_ENABLE = yes
+##ENCODER_ENABLE = yes        # Enable Encoder
 ##DIP_SWITCH_ENABLE = yes
 
 ##EEPROM_DRIVER = transient
 
+RGB_MATRIX_ENABLE = yes
+RGB_MATRIX_DRIVER = IS31FL3731
+
+#LED_MATRIX_ENABLE = no
+#LED_MATRIX_DRIVER = IS31FL3731
+
 #OLED_ENABLE = yes
-#OLED_DRIVER = SSD1306		# default값이라 필요없는듯
+##OLED_DRIVER = SSD1306
 
 #간간히 OLED가 동작안하는 문제 해결?
 #ISSI_ENABLE = yes			# If the I2C pullup resistors aren't install this must be disabled

@@ -1,4 +1,4 @@
-/* Copyright 2020 QMK
+/* Copyright 2021 Simon Arlott
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,16 @@
 #define HAL_USE_PAL                 TRUE
 #define PAL_USE_CALLBACKS           TRUE
 
-//#define HAL_USE_GPT           TRUE
-//#define STM32_GPT_USE_TIM3    TRUE
+#define HAL_USE_GPT                 TRUE
 
-/* enable I2C, used for OLED & 3731 LED Driver */
-#define HAL_USE_I2C TRUE      // 이전과 다르게 I2C를 사용안하면  꺼야 컴파일 에러가 없음
-
-/* enable SPI, used for WS2812underglow(RGB BackLight)/WS2812 RGB-Matrix SPI driver */
-#define HAL_USE_SPI TRUE
-
-/* enable PWM, used for BackLight/WS2812 underglow(RGB BackLight)/WS2812 RGB-Matrix PWM driver */
-#define HAL_USE_PWM TRUE
+#ifdef      LED_MATRIX_ENABLE
+#define HAL_USE_I2C         TRUE
+#elif       RGB_MATRIX_ENABLE
+#define HAL_USE_I2C         TRUE
+#elif       OLED_ENABLE
+#define HAL_USE_I2C         TRUE
+#else
+#define HAL_USE_I2C         FALSE       // 이전과 다르게 I2C를 사용안하면  꺼야 컴파일 에러가 없음
+#endif
 
 #include_next <halconf.h>

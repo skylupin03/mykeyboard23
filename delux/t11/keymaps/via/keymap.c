@@ -1,7 +1,9 @@
 #include QMK_KEYBOARD_H
 //#include "k20emul2.h"
 
-static void render_logo_font(void);
+#ifdef OLED_ENABLE      
+    static void render_logo_font(void);
+#endif
 
 uint16_t startup_timer;
 static bool finished_timer = false;
@@ -323,8 +325,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case QK_BOOT:
             if (record->event.pressed) {
-                oled_clear();                    //               on_all_leds();
-                render_logo_font();         
+                #ifdef OLED_ENABLE                
+                    oled_clear();                    //               on_all_leds();
+                    render_logo_font();         
+                #endif
             }
             return true; 
             
@@ -451,7 +455,7 @@ static void render_rgbled_status(void) {
         string[2] = '0' + m % 10;
         string[1] = ( m /= 10) % 10 ? '0' + (m) % 10 : (m / 10) % 10 ? '0' : ' ';
         string[0] =  m / 10 ? '0' + m / 10 : ' ';
-        oled_write_P(PSTR("-"), false);
+        oled_write_P(PSTR(" -"), false);
         oled_write(string, false);
 
         uint16_t h = rgb_matrix_get_hue()/RGBLIGHT_HUE_STEP;

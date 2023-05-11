@@ -20,15 +20,15 @@
 #define PAL_USE_CALLBACKS           TRUE
 
 #define HAL_USE_GPT                 TRUE
+//define STM32_GPT_USE_TIM3          TRUE
 
-#ifdef      LED_MATRIX_ENABLE
-#define HAL_USE_I2C         TRUE
-#elif       RGB_MATRIX_ENABLE
-#define HAL_USE_I2C         TRUE
-#elif       OLED_ENABLE
-#define HAL_USE_I2C         TRUE
-#else
-#define HAL_USE_I2C         FALSE       // 이전과 다르게 I2C를 사용안하면  꺼야 컴파일 에러가 없음
-#endif
+/* enable I2C, used for OLED & 3731 LED Driver */
+#define HAL_USE_I2C     TRUE      // 이전과 다르게 I2C를 사용안하면  꺼야 컴파일 에러가 없음
+
+/* enable SPI, used for WS2812underglow(RGB BackLight)/WS2812 RGB-Matrix SPI driver */
+#define HAL_USE_SPI     TRUE
+
+/* enable PWM, used for BackLight/WS2812 underglow(RGB BackLight)/WS2812 RGB-Matrix PWM driver */
+//#define HAL_USE_PWM TRUE
 
 #include_next <halconf.h>

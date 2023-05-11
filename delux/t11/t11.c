@@ -151,37 +151,49 @@ void keyboard_post_init_kb(void) {
 #ifdef RGB_MATRIX_ENABLE
 
 __attribute__ ((weak)) bool rgb_matrix_indicators_kb(void) {
+
+
     if (rgb_matrix_is_enabled()) {  // turn the lights on when it is enabled.
         uint8_t layer = get_highest_layer(layer_state|default_layer_state);
         switch (layer) {
             case 0:
                 // rgb_matrix_set_color(pgm_read_byte(&convert_led_location2number[11]),  RGB_RED);         //  RGB_TOG  <- too heavy.
-                rgb_matrix_set_color(0,10,200,10);
+                rgb_matrix_set_color(1,10,200,10);
                 break;
             case 1:
-                rgb_matrix_set_color(0,10,200,10);            
+                rgb_matrix_set_color(1,200,10,10);            
                 rgb_matrix_set_color(25,200,200,200);
                 break;
             case 2:
-                rgb_matrix_set_color(0,10,10,200);
+                rgb_matrix_set_color(2,10,200,10);
                 break;
             case 3:
-                rgb_matrix_set_color(0,10,10,200);            
+                rgb_matrix_set_color(2,200,10,10);            
                 rgb_matrix_set_color(25,200,200,200);
                 break;
+            case 4:
+                rgb_matrix_set_color(3,10,200,10);
+                break;
+            case 5:
+                rgb_matrix_set_color(3,200,10,10);            
+                rgb_matrix_set_color(25,200,200,200);
+                break;                
         }
         led_t host_leds = host_keyboard_led_state();
-        if (host_leds.caps_lock) {
-                rgb_matrix_set_color(1,100,100,100);
+        // if (host_leds.caps_lock) {
+        //         rgb_matrix_set_color(0,100,100,100);
+        // }
+        // if (host_leds.scroll_lock) {
+        //         rgb_matrix_set_color(0,100,100,100);
+        //     }
+        // if (host_keyboard_led_state().num_lock) {       // NUM lock 위치
+        //         rgb_matrix_set_color(0,100,100,100);
+        //     }
+        if (host_leds.caps_lock||host_leds.scroll_lock||host_leds.num_lock){
+            rgb_matrix_set_color(0, host_leds.caps_lock * 200, host_leds.scroll_lock * 200, host_leds.num_lock * 200);
         }
-        if (host_leds.scroll_lock) {
-                rgb_matrix_set_color(2,100,100,100);
-            }
-        if (host_keyboard_led_state().num_lock) {       // NUM lock 위치
-                rgb_matrix_set_color(3,100,100,100);
-            }
-        }
-        return TRUE;
+    }
+    return TRUE;
 }
 /*
        // LED Index to Physical Position (for 32x8 ws2812 Square)

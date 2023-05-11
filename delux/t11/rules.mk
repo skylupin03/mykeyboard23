@@ -33,7 +33,7 @@ ENCODER_ENABLE = yes        # Enable Encoder
 ENCODER_MAP_ENABLE = yes
 #DIP_SWITCH_ENABLE = yes
 
-OLED_ENABLE = yes
+OLED_ENABLE = yes			# +5568(0x15C0)byte
 #OLED_DRIVER = SSD1306		# default값이라 필요없는듯
 
 #BACKLIGHT_ENABLE = yes       # Enable keyboard backlight functionality
