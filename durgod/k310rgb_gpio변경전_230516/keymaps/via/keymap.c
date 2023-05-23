@@ -550,15 +550,20 @@ void render_info(void){
             oled_write_ln_P(PSTR("error?"), false);
     }
 //    oled_write_P(PSTR("---------------\n"), false);
-      oled_set_cursor(3, 2);   
+      /*  oled_set_cursor(3, 2);   
     // Host Keyboard LED Status
     led_t led_state = host_keyboard_led_state();
     oled_write_P(led_state.num_lock ? PSTR("NUM  ") : PSTR("     "), false);
     oled_write_P(led_state.caps_lock ? PSTR("CAP  ") : PSTR("     "), false);
     oled_write_P(led_state.scroll_lock ? PSTR("SCR  ") : PSTR("     "), false);
+    */
 }
 //---------------------------------------
 static void render_rgbled_status(void) {
+
+    oled_set_cursor(0, 2);
+    oled_rgb_mode();
+/*
     char string[4];
 
     oled_set_cursor(0, 3);
@@ -600,11 +605,7 @@ static void render_rgbled_status(void) {
         oled_write_P(PSTR("RGB off , WPM = "), false);
             oled_write(get_u8_str(get_current_wpm(), '0'), false);  //예제 키보드= adpenrose-akemipad
     }
-
-    oled_set_cursor(0, 4);
-    oled_rgb_mode();
-
-    
+    */
 }
 
 // 참고키보드 = 0xcb-1377, 0xcb-STATIC, adafruit-macropad

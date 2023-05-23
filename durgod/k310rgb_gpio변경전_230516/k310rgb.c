@@ -137,45 +137,42 @@ void keyboard_post_init_kb(void) {
 //------------------------------------------
 #ifdef RGB_MATRIX_ENABLE
 
-__attribute__ ((weak)) bool rgb_matrix_indicators_kb(void)  {
+/*__attribute__ ((weak)) bool rgb_matrix_indicators_kb(void)  {
     led_t host_leds = host_keyboard_led_state();
 
     if (host_leds.caps_lock) { 
-        rgb_matrix_set_color(84, 0x20, 0x0, 0x20);  
-        rgb_matrix_set_color(0, 0x20, 0x0, 0x20);    
-        rgb_matrix_set_color(1, 0x20, 0x0, 0x20);            
+        rgb_matrix_set_color(84, 0x05, 0x0, 0x05);
+        rgb_matrix_set_color(0, 0x05, 0x0, 0x05);        
     }
     if (host_leds.scroll_lock) {
-        rgb_matrix_set_color(25, 0x00, 0x20, 0x20);
-        rgb_matrix_set_color(2, 0x00, 0x20, 0x20);    
-        rgb_matrix_set_color(3, 0x00, 0x20, 0x20);
+        rgb_matrix_set_color(25, 0x00, 0x5, 0x5);
+        rgb_matrix_set_color(1, 0x00, 0x5, 0x5);
     }        
     if (host_keyboard_led_state().num_lock) {
-        rgb_matrix_set_color(59, 0x20, 0x20, 0x00);
-        rgb_matrix_set_color(4, 0x20, 0x20, 0x00);
-        rgb_matrix_set_color(5, 0x20, 0x20, 0x00);     
+        rgb_matrix_set_color(59, 0x5, 0x5, 0x00);
+        rgb_matrix_set_color(2, 0x5, 0x5, 0x00);
     }
 
     uint8_t layer = get_highest_layer(layer_state|default_layer_state);
     switch (layer) {
         case 0:
             // rgb_matrix_set_color(pgm_read_byte(&convert_led_location2number[11]),  RGB_RED);         //  RGB_TOG  <- too heavy.
-            rgb_matrix_set_color(10,0,0,40);
+            rgb_matrix_set_color(3,0,0,5);
             break;
         case 1:
-            rgb_matrix_set_color(10,0,0,40);      
-            rgb_matrix_set_color(11,0,0,40);
+            rgb_matrix_set_color(3,0,0,5);      
+            rgb_matrix_set_color(4,0,0,10);
             break;
         case 2:
-            rgb_matrix_set_color(12,30,0,0);
+            rgb_matrix_set_color(5,3,0,0);
             break;
         case 3:
-            rgb_matrix_set_color(12,30,0,0);          
-            rgb_matrix_set_color(13,30,0,0);
+            rgb_matrix_set_color(5,3,0,0);          
+            rgb_matrix_set_color(6,8,0,0);
             break;              
     }
     return TRUE;
-} 
+} */
 
 //----------------------------------
 
@@ -368,32 +365,33 @@ KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPC,                   
 #endif
 
 
-// RGB rgb_matrix_hsv_to_rgb(HSV hsv) {
-//     hsv.v /= 2;
-//     return hsv_to_rgb(hsv); 
-// }
+RGB rgb_matrix_hsv_to_rgb(HSV hsv) {
+    hsv.v /= 2;
+    return hsv_to_rgb(hsv); 
+}
 
-// bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
-//     if (host_keyboard_led_state().caps_lock) {
-//         for (uint8_t i = led_min; i < led_max; i++) {
-//             if (g_led_config.flags[i] & LED_FLAG_UNDERGLOW) {
-//                 rgb_matrix_set_color(i, RGB_RED);
-//             }
-//         }
-//     }
-//    return TRUE;    //    return false;
+bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
+    if (host_keyboard_led_state().caps_lock) {
+        for (uint8_t i = led_min; i < led_max; i++) {
+            if (g_led_config.flags[i] & LED_FLAG_UNDERGLOW) {
+                rgb_matrix_set_color(i, RGB_RED);
+            }
+        }
+    }
+ //   return TRUE;    //    return false;
 
-// //  //   RGB_MATRIX_USE_LIMITS(led_min, led_max);
-// //     HSV      hsv  = rgb_matrix_config.hsv;
-// //     uint16_t time = scale16by8(g_rgb_timer, rgb_matrix_config.speed / 8);
-// //     hsv.v         = scale8(abs8(sin8(time) - 128) * 2, hsv.v);
-// //     RGB rgb       = rgb_matrix_hsv_to_rgb(hsv);
-// //     for (uint8_t i = 0; i < 21; i++) {
-// //      //   RGB_MATRIX_TEST_LED_FLAGS();
-// //         rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
-// //     }
-// //     return TRUE;
-// }
+ //   RGB_MATRIX_USE_LIMITS(led_min, led_max);
+
+    HSV      hsv  = rgb_matrix_config.hsv;
+    uint16_t time = scale16by8(g_rgb_timer, rgb_matrix_config.speed / 8);
+    hsv.v         = scale8(abs8(sin8(time) - 128) * 2, hsv.v);
+    RGB rgb       = rgb_matrix_hsv_to_rgb(hsv);
+    for (uint8_t i = 0; i < 21; i++) {
+     //   RGB_MATRIX_TEST_LED_FLAGS();
+        rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+    }
+    return TRUE;
+}
 
 
 

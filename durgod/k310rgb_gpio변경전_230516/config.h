@@ -26,15 +26,12 @@
 #define MATRIX_COLS 16
 #define MATRIX_ROWS 8
 
- #define MATRIX_ROW_PINS {A0, A1, A2, A3, A4, A5, A6, A7 }    // 메타블 ARTWORK(DURGOD original) 230516
- //#define MATRIX_ROW_PINS { C0, C1, C2, C3, C4, C5, C6, C7}       // nucleo 보드 점퍼 1차 테스트
-
-//#define MATRIX_COL_PINS {C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, B15, C6, C7, C10, C11, C12 }   // 메타블 ARTWORK(DURGOD original) 230516
-#define MATRIX_COL_PINS {C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, A15, C6, C7, C10, C11, C12 }    /* 스트링LED 제어를 SPI2- B15로 하여 매트릭스를 변경함*/
+// #define MATRIX_ROW_PINS {A0, A1, A2, A3, A4, A5, A6, A7 }    // 
+// #define MATRIX_COL_PINS {C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, B15, C6, C7, C10, C11, C12 }
+#define MATRIX_ROW_PINS { C0, C1, C2, C3, C4, C5, C6, C7}       // 
 //#define MATRIX_COL_PINS { B0, B1, B2, B3, B4, B5, B8, B9, B10, B13, B14, B15, C9, C10, C11, C12}
-
-//#define MATRIX_COL_PINS { B0, B1, B2, B3, B4, B5, B8, B9, B10, B13, B14, C8, C9, C10, C11, C12}      // nucleo 보드 점퍼 1차 테스트
-
+/* 스트링LED 제어를 SPI2- B15로 하여 매트릭스를 변경함*/
+#define MATRIX_COL_PINS { B0, B1, B2, B3, B4, B5, B8, B9, B10, B13, B14, C8, C9, C10, C11, C12}
 /* COL2ROW, ROW2COL*/    
 #define DIODE_DIRECTION ROW2COL
 
@@ -44,7 +41,7 @@
 //#define DYNAMIC_KEYMAP_LAYER_COUNT 4
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
-#define DEBOUNCE 5
+#define DEBOUNCE 5 
 
 /* Bootmagic Lite key configuration */
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP TRUE
@@ -54,19 +51,19 @@
 #define TAPPING_TERM 175                //////////////////////////////////////////////////
 
 /* LED indicator pins */
-#define LED_CAPS_LOCK_PIN   C9
-#define LED_SCROLL_LOCK_PIN A8
-#define LED_WIN_LOCK_PIN    A9
-#define LED_MR_LOCK_PIN     A10
-#define LED_NUM_LOCK_PIN    C8
+// #define LED_CAPS_LOCK_PIN   C9
+// #define LED_SCROLL_LOCK_PIN A8
+// #define LED_WIN_LOCK_PIN    A9
+// #define LED_MR_LOCK_PIN     A10
+// #define LED_NUM_LOCK_PIN    C8
 /* Original hardware "reset" button on pin D2 */
 #define HARDWARE_RESET_PIN  D2
 
-// #define LED_CAPS_LOCK_PIN   A14     //C9
-// #define LED_SCROLL_LOCK_PIN A15     //A8
-// #define LED_WIN_LOCK_PIN    C13     //A9
-// #define LED_MR_LOCK_PIN     A0      //A10
-// #define LED_NUM_LOCK_PIN    A13     //C8
+#define LED_CAPS_LOCK_PIN   A14     //C9
+#define LED_SCROLL_LOCK_PIN A15     //A8
+#define LED_WIN_LOCK_PIN    C13     //A9
+#define LED_MR_LOCK_PIN     A0      //A10
+#define LED_NUM_LOCK_PIN    A13     //C8
 #define LED_PIN_ON_STATE    0
 
 //------------------------------------- Add ----------------------------------
@@ -91,7 +88,6 @@
 //-------------------------------------------------------------------------------
 /* RGB Underglow or WS2812 RGB Matirx */
 #define RGB_DI_PIN B15    // The pin connected to the data pin of the LEDs
-//#define RGB_DI_PIN C3    // The pin connected to the data pin of the LEDs
 
 #ifdef RGB_DI_PIN
 //pwm driver
@@ -105,8 +101,7 @@
     // //#define WS2812_PWM_TARGET_PERIOD 800000
 //spi driver
     #define WS2812_SPI                  SPID2
-    #define WS2812_SPI_MOSI_PAL_MODE    0      // 0 for F072-B15, 5 for F4x1(F103?) // MOSI pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 5   
-//    #define WS2812_SPI_MOSI_PAL_MODE    1      // 1 for F072-C3, 5 for F4x1(F103?) // MOSI pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 5   
+    #define WS2812_SPI_MOSI_PAL_MODE    0      // 0 for F072, 5 for F4x1(F103?) // MOSI pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 5   
      #define WS2812_SPI_SCK_PIN       B13     //
      #define WS2812_SPI_SCK_PAL_MODE  5       // F072, enable = 0 / F401 enable = 5  (disable은 반대인가?)  (enable되어도 매트릭스 할당되면 매트릭스로 동작함)
     #define WS2812_SPI_DIVISOR	        16      //4 4와 8만 되나?       //16    
@@ -344,14 +339,13 @@
 
 // #define OLED_IC OLED_IC_SSD1306      //안해도 default는 SSD1306
 
-/* Required for SH1106 Oled Driver + 128x64 (ex = 0.96inch)*/
-#define OLED_IC OLED_IC_SH1106      // YwRobot 1.3inch
-#define OLED_COLUMN_OFFSET 2        // SH1106 screen is a little off to the left
-#define OLED_DISPLAY_128X64           // 0.91inch = 128x32, 0.96inch(1.3inch) = 128x64
-
+/* Required for SH1106 Oled Driver */
+//#define OLED_IC OLED_IC_SH1106      // YwRobot 1.3inch
+//#define OLED_COLUMN_OFFSET 2        // SH1106 screen is a little off to the left
 /* Default Oled init */
 #define OLED_TIMEOUT 20000              // Turns off OLED after said amount of milliseconds
 #define OLED_BRIGHTNESS 255
+//#define OLED_DISPLAY_128X64           // 0.91inch = 128x32, 0.96inch(1.3inch) = 128x64
 //#define OLED_FONT_END 255         //error: static assertion failed: "OLED_FONT_END references outside array"
 #define OLED_FONT_H "gfxfont.c"
 //#define OLED_UPDATE_INTERVAL 33 // ~30fps

@@ -74,8 +74,6 @@ KC_LOCK_SCREEN,         // MAC_key
 #define KC_DOND KC_DO_NOT_DISTURB
 #define KC_LSCR KC_LOCK_SCREEN
 
-#define KC_MCTL KC_MISSION_CONTROL
-#define KC_LPAD KC_LAUNCHPAD
 //#define KC_TASK KC_TASK_VIEW
 //#define KC_FLXP KC_FILE_EXPLORER
 #define KC_TASK LGUI(KC_TAB)       // Task view (modifier combination)
