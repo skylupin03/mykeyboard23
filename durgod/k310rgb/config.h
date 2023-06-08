@@ -31,8 +31,6 @@
 
 //#define MATRIX_COL_PINS {C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, B15, C6, C7, C10, C11, C12 }   // 메타블 ARTWORK(DURGOD original) 230516
 #define MATRIX_COL_PINS {C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, A15, C6, C7, C10, C11, C12 }    /* 스트링LED 제어를 SPI2- B15로 하여 매트릭스를 변경함*/
-//#define MATRIX_COL_PINS { B0, B1, B2, B3, B4, B5, B8, B9, B10, B13, B14, B15, C9, C10, C11, C12}
-
 //#define MATRIX_COL_PINS { B0, B1, B2, B3, B4, B5, B8, B9, B10, B13, B14, C8, C9, C10, C11, C12}      // nucleo 보드 점퍼 1차 테스트
 
 /* COL2ROW, ROW2COL*/    
@@ -56,18 +54,30 @@
 /* LED indicator pins */
 #define LED_CAPS_LOCK_PIN   C9
 #define LED_SCROLL_LOCK_PIN A8
+#define LED_NUM_LOCK_PIN    C8
 #define LED_WIN_LOCK_PIN    A9
 #define LED_MR_LOCK_PIN     A10
-#define LED_NUM_LOCK_PIN    C8
+
+#define LED_PIN_ON_STATE    0
+
 /* Original hardware "reset" button on pin D2 */
 #define HARDWARE_RESET_PIN  D2
 
-// #define LED_CAPS_LOCK_PIN   A14     //C9
-// #define LED_SCROLL_LOCK_PIN A15     //A8
-// #define LED_WIN_LOCK_PIN    C13     //A9
-// #define LED_MR_LOCK_PIN     A0      //A10
-// #define LED_NUM_LOCK_PIN    A13     //C8
-#define LED_PIN_ON_STATE    0
+#define GPIO_KM_PWEN        C1      // Hub Device Power on/off
+#define GPIO_KM_OE          C2      // Hub Host Connection on/off
+#define GPIO_KM_SEL         C0      // Hub Host Selection
+
+/* Encoder used pins */
+#define ENCODERS_PAD_A { C13 }  //
+#define ENCODERS_PAD_B { C3 }   // { C14 }
+/* Specifies the number of pulses the encoder registers between each detent */
+#define ENCODER_RESOLUTION 2       //#define ENCODER_RESOLUTIONS { 2, 2 }  //4
+#define ENCODER_DIRECTION_FLIP
+//#define ENCODER_DEFAULT_POS 0x3
+
+/* DIP switch */
+//#define DIP_SWITCH_MATRIX_GRID  { {5,4}, {1.6}, {2,6} }
+//#define DIP_SWITCH_PINS { C13 }
 
 //------------------------------------- Add ----------------------------------
 

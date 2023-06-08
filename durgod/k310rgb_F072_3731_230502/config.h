@@ -64,6 +64,7 @@
 #define LED_WIN_LOCK_PIN    C13     //A9
 #define LED_MR_LOCK_PIN     A0      //A10
 #define LED_NUM_LOCK_PIN    A13     //C8
+
 #define LED_PIN_ON_STATE    0
 
 //------------------------------------- Add ----------------------------------

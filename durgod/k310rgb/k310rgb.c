@@ -106,28 +106,40 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 // }
 // #endif
 
-// void keyboard_pre_init_kb(void) {
-//     setPinInputHigh(HARDWARE_RESET_PIN);
+ void keyboard_pre_init_kb(void) {
 
-// #ifndef HW_RESET_PIN_DISABLED
-//     /* Jump to bootloader when the hardware reset button is pressed */
-//     palEnablePadEvent(PAL_PORT(HARDWARE_RESET_PIN), PAL_PAD(HARDWARE_RESET_PIN), PAL_EVENT_MODE_FALLING_EDGE);
-//     palSetPadCallback(PAL_PORT(HARDWARE_RESET_PIN), PAL_PAD(HARDWARE_RESET_PIN), hardware_reset_cb, NULL);
+    setPinOutput(GPIO_KM_OE);       // power on default = 0
+    setPinOutput(GPIO_KM_SEL);      // power on default = 0
+    setPinOutput(GPIO_KM_PWEN);     // power on default = 1
 
-//     /* The interrupt is edge-triggered so check that it's not already pressed */
-//     if (!readPin(HARDWARE_RESET_PIN)) {
-//         bootloader_jump();
-//     }
-// #endif
-// }
+    keyboard_pre_init_user();
+    
+    //     setPinInputHigh(HARDWARE_RESET_PIN);
+
+    // #ifndef HW_RESET_PIN_DISABLED
+    //     /* Jump to bootloader when the hardware reset button is pressed */
+    //     palEnablePadEvent(PAL_PORT(HARDWARE_RESET_PIN), PAL_PAD(HARDWARE_RESET_PIN), PAL_EVENT_MODE_FALLING_EDGE);
+    //     palSetPadCallback(PAL_PORT(HARDWARE_RESET_PIN), PAL_PAD(HARDWARE_RESET_PIN), hardware_reset_cb, NULL);
+
+    //     /* The interrupt is edge-triggered so check that it's not already pressed */
+    //     if (!readPin(HARDWARE_RESET_PIN)) {
+    //         bootloader_jump();
+    //     }
+    // #endif
+ }
 
 void keyboard_post_init_kb(void) {
+
+    keyboard_post_init_user();
+
+    #ifdef AUTO_SHIFT_ENABLE 
 //    tap_code16(KC_2);       // (AS_OFF); // 동작안함
     autoshift_disable();
-    oneshot_disable();      // oneshot_enable(), oneshot_toggle()
+//    if (get_autoshift_state()) writePinHigh(LED_MR_LOCK_PIN);  // 동작안함, LED제어는 되는데 아직 autoshift가 동작안하는 듯
+//    else writePinLow(LED_MR_LOCK_PIN);
+    #endif
 
-    //    if (get_autoshift_state()) writePinHigh(LED_MR_LOCK_PIN);  // 동작안함, LED제어는 되는데 아직 autoshift가 동작안하는 듯
-    //    else writePinLow(LED_MR_LOCK_PIN);
+    oneshot_disable();      // oneshot_enable(), oneshot_toggle()
 }
 //----------------------------------
 
@@ -174,6 +186,9 @@ __attribute__ ((weak)) bool rgb_matrix_indicators_kb(void)  {
             rgb_matrix_set_color(13,30,0,0);
             break;              
     }
+
+    return rgb_matrix_indicators_user();
+
     return TRUE;
 } 
 
