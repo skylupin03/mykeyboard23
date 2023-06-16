@@ -31,4 +31,6 @@
 /* enable PWM, used for BackLight/WS2812 underglow(RGB BackLight)/WS2812 RGB-Matrix PWM driver */
 //#define HAL_USE_PWM TRUE
 
+#define HAL_USE_ADC     TRUE
+
 #include_next <halconf.h>

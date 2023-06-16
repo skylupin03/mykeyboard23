@@ -98,6 +98,10 @@
 #define LEADER_PER_KEY_TIMING
 //#define LEADER_NO_TIMEOUT
 
+#define JOYSTICK_BUTTON_COUNT 16        // Min 0, max 32
+#define JOYSTICK_AXIS_COUNT 2           // Min 0, max 6: X, Y, Z, Rx, Ry, Rz
+#define JOYSTICK_AXIS_RESOLUTION 12     // Min 8, max 16
+
 //-------------------------------------------------------------------------------
 /* RGB Underglow or WS2812 RGB Matirx */
 #define RGB_DI_PIN B15    // The pin connected to the data pin of the LEDs
