@@ -64,7 +64,7 @@ OLED_ENABLE = yes			# +5568(0x15C0)byte
 #LEADER_ENABLE = yes
 
 JOYSTICK_ENABLE = yes		# #define HAL_USE_ADC TRUE(halconf.h) / STM32_ADC_USE_ADCx (mcuconf.h)
-JOYSTICK_DRIVER = digital
+#JOYSTICK_DRIVER = digital
 #JOYSTICK_DRIVER = analog
 SRC += analog.c
 

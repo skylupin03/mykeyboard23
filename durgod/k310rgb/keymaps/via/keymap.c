@@ -275,9 +275,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //-----------------------------------------------------------------
 
 joystick_config_t joystick_axes[JOYSTICK_AXIS_COUNT] = {
-//    JOYSTICK_AXIS_IN_OUT(C3, B8, 900, 575, 285), 
-    JOYSTICK_AXIS_VIRTUAL,
-    JOYSTICK_AXIS_VIRTUAL    
+//    [0] = JOYSTICK_AXIS_IN_OUT(C3, B8, 900, 575, 285), 
+//    [0] = JOYSTICK_AXIS_IN(A0, 256, 512, 700),
+    [0] = JOYSTICK_AXIS_VIRTUAL,
+    [1] = JOYSTICK_AXIS_VIRTUAL    
 };
 
 static bool precision = false;
