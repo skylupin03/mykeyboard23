@@ -1,17 +1,21 @@
 {
-    "keyboard_name": "METABLE K310 RGB",
+    "keyboard_name": "Metable_Pulsar K310 RGB Develope",
     "manufacturer": "METABLE",
     "url": "https://www.durgod.com/page9?product_id=53&_l=en",
     "maintainer": "Jimmy Yun",
     "usb": {
         "vid": "0x1C6C",
-        "pid": "0xF013",
+        "pid": "0xF012",
         "device_version": "0.0.1"
     },
 
     "layouts": {
         "LAYOUT_fullsize_ansi": {
             "layout": [
+                { "label": "TACK1", "x": 13, "y": -1 },
+                { "label": "TACK2", "x": 14, "y": -1 },
+                { "label": "ENCODER", "x": 16, "y": -1 },
+
                 { "label": "Esc", "x": 0, "y": 0 },
                 { "label": "F1", "x": 2, "y": 0 },
                 { "label": "F2", "x": 3, "y": 0 },
@@ -25,11 +29,12 @@
                 { "label": "F10", "x": 12, "y": 0 },
                 { "label": "F11", "x": 13, "y": 0 },
                 { "label": "F12", "x": 14, "y": 0 },
+
+                { "label": "QUICK", "x": 15, "y": 0 },
+
                 { "label": "PrtSc", "x": 16, "y": 0 },
                 { "label": "Scroll Lock", "x": 17, "y": 0 },
                 { "label": "Pause", "x": 18, "y": 0 },
-
-                { "label": "ENCODER", "x": 21, "y": 0 },
 
                 { "label": "~", "x": 0, "y": 1.5 },
                 { "label": "!", "x": 1, "y": 1.5 },
@@ -127,6 +132,10 @@
         },
         "LAYOUT_fullsize_iso": {
             "layout": [
+                { "label": "TACK1", "x": 13, "y": -1 },
+                { "label": "TACK2", "x": 14, "y": -1 },
+                { "label": "ENCODER", "x": 16, "y": -1 },
+
                 { "label": "Esc", "x": 0, "y": 0 },
                 { "label": "F1", "x": 2, "y": 0 },
                 { "label": "F2", "x": 3, "y": 0 },
@@ -140,11 +149,12 @@
                 { "label": "F10", "x": 12, "y": 0 },
                 { "label": "F11", "x": 13, "y": 0 },
                 { "label": "F12", "x": 14, "y": 0 },
+
+                { "label": "QUICK", "x": 15, "y": 0 },
+
                 { "label": "PrtSc", "x": 16, "y": 0 },
                 { "label": "Scroll Lock", "x": 17, "y": 0 },
                 { "label": "Pause", "x": 18, "y": 0 },
-
-                { "label": "ENCODER", "x": 21, "y": 0 },
 
                 { "label": "~", "x": 0, "y": 1.5 },
                 { "label": "!", "x": 1, "y": 1.5 },
@@ -243,6 +253,10 @@
         },
         "LAYOUT_all": {
             "layout": [
+                { "label": "TACK1", "x": 13, "y": -1 },
+                { "label": "TACK2", "x": 14, "y": -1 },
+                { "label": "ENCODER", "x": 16, "y": -1 },
+
                 { "label": "Esc", "x": 0, "y": 0 },
                 { "label": "F1", "x": 2, "y": 0 },
                 { "label": "F2", "x": 3, "y": 0 },
@@ -257,11 +271,11 @@
                 { "label": "F11", "x": 13, "y": 0 },
                 { "label": "F12", "x": 14, "y": 0 },
 
+                { "label": "QUICK", "x": 15, "y": 0 },
+
                 { "label": "PrtSc", "x": 16, "y": 0 },
                 { "label": "Scroll Lock", "x": 17, "y": 0 },
                 { "label": "Pause", "x": 18, "y": 0 },
-
-                { "label": "ENCODER", "x": 21, "y": 0 },
 
                 { "label": "~", "x": 0, "y": 1.5 },
                 { "label": "!", "x": 1, "y": 1.5 },

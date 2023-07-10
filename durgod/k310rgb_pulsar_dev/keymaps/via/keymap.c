@@ -196,7 +196,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         OSM(MOD_LCTL), OSM(MOD_LGUI), OSM(MOD_LALT),          KC_SPC,                             KC_RALT,MO(WIN_FN),KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
       */
      [WIN_BASE] = LAYOUT_all(/* Base Layer */
-        KC_ESC,   KC_F1, KC_F2, KC_F3, KC_F4,    KC_F5, KC_F6, KC_F7, KC_F8,   KC_F9, KC_F10, KC_F11, KC_F12,    KC_PSCR, KC_SCRL, KC_PAUS,                         KC_MUTE,
+                                                                                                                                                        KC_PC1, KC_PC2, KC_MUTE,
+        KC_ESC,   KC_F1, KC_F2, KC_F3, KC_F4,    KC_F5, KC_F6, KC_F7, KC_F8,   KC_F9, KC_F10, KC_F11, KC_F12,  KC_TPC,    KC_PSCR, KC_SCRL, KC_PAUS, 
         KC_GRV,  KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL,       KC_BSPC,     KC_INS, KC_HOME, KC_PGUP,     TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS, 
         KC_TAB,     KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC,    KC_BSLS,     KC_DEL, KC_END, KC_PGDN,     KC_P7, KC_P8, KC_P9, KC_PPLS, 
         KC_CAPS,  KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_NUHS,    KC_ENT,                                  KC_P4, KC_P5, KC_P6, 
@@ -228,21 +229,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         QK_BOOT,          KC_MPLY, KC_MSTP, KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_TASK, KC_FLXP, KC_MSEL, KC_BRIU, KC_BRID,    _______, NK_ON, NK_OFF,
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_TOG, RGB_HUI, RGB_MOD,    KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
         _______, _______, KC_WINM, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_SAI, RGB_HUD, RGB_RMOD,    _______, KC_MS_U, _______, KC_WH_U,
-        CL_SWAP,   JS_0,    JS_1,    JS_2,    JS_3,    JS_4,    JS_5,    JS_6,    JS_7,    JS_8,    JS_9,   JS_10, _______,    JS_11,                                 KC_MS_L, _______, KC_MS_R,
-        _______, _______, _______, _______, _______, _______, _______, _______, KC_MACM,  JS_12,   JS_13,   JS_14,             JS_15,              RGB_VAI,             _______, KC_MS_D, _______, KC_WH_D,
+        CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                  KC_MS_L, _______, KC_MS_R,
+        _______, _______, _______, _______, _______, _______, _______, _______, KC_MACM, _______, _______, _______,          _______,             RGB_VAI,             _______, KC_MS_D, _______, KC_WH_D,
         CL_NORM, KC_TGUI, _______,                            _______,                            _______, _______, _______, _______,    RGB_SPD, RGB_VAD, RGB_SPI,    KC_BTN1,          KC_BTN2
     ),
-
-          JS_12,   JS_13,   JS_14,   JS_15, y
-
       */
      [WIN_FN] = LAYOUT_all(/* Function Layer */
-        QK_BOOT,         TD(TD_2), TD(TD_5), KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_TASK, TD(TD_3),TD(TD_4), KC_BRIU, KC_BRID,   RGB_TOG, NK_ON,   NK_OFF,                              RGB_MOD,
-        DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______,   NK_ON,  NK_OFF,   RGB_TOG,   RGB_SAI, RGB_HUI, RGB_MOD,      KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
-        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, _______, _______, _______, _______, _______, _______,  _______,    RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
-        CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______,                                   KC_MS_L, KC_BTN3, KC_MS_R,
-        _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM,  _______, _______, _______,           _______,            RGB_VAI,               KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D, 
-        CL_NORM, KC_TGUI, _______,                             _______,                             KC_PC1, _______, KC_PC2,    KC_TPC,   RGB_SPD, RGB_VAD, RGB_SPI,      KC_BTN1,       KC_BTN2),
+                                                                                                                                                            KC_1, KC_2, RGB_MOD,
+        QK_BOOT,         TD(TD_2), TD(TD_5), KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_TASK, TD(TD_3), TD(TD_4), KC_BRIU, KC_BRID,    KC_0,    RGB_TOG, NK_ON, NK_OFF, 
+        DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, _______, _______,    EE_CLR,    RGB_SAI, RGB_HUI, RGB_MOD,    KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
+        _______,   _______, KC_WINM, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   QK_RBT,   RGB_SAD, RGB_HUD, RGB_RMOD,   KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
+        CL_SWAP,      JS_0,    JS_1,    JS_2,    JS_3,    JS_4,    JS_5,    JS_6,    JS_7,    JS_8,    JS_9,   JS_10, _______,   JS_11,                                  KC_MS_L, KC_BTN3, KC_MS_R,
+        _______, _______, _______, _______, _______, _______, _______, _______, KC_MACM,     JS_12,   JS_13,   JS_14,   JS_15,                       RGB_VAI,              KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D, 
+        CL_NORM, KC_TGUI, _______,                             _______,                              KC_PC1, _______, KC_PC2,  KC_TPC,    RGB_SPD, RGB_VAD, RGB_SPI,     KC_BTN1,       KC_BTN2),
     /*                 
     [MAC_BASE] = LAYOUT_all( // Layer 3
         KC_ESC,           KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,    KC_LPAD, KC_SCRL, KC_LOCK_,
@@ -253,8 +252,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LALT, KC_LGUI,                            KC_SPC,                             KC_RGUI,MO(MAC_FN),KC_RALT,KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
     ),
        */
-    [MAC_BASE] = LAYOUT_all(/* Layer 3 */ 
-        KC_ESC,          KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,    KC_LPAD, KC_SCRL, KC_LOCK_,                          KC_MUTE,
+    [MAC_BASE] = LAYOUT_all(/* Layer 3 */
+                                                                                                                                                                            KC_1, KC_2, KC_3,
+        KC_ESC,          KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,    KC_0,    KC_LPAD, KC_SCRL, KC_LOCK_, 
         KC_GRV,  KC_1,   KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,     TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS, 
         KC_TAB,  KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,     KC_P7,    KC_P8,    KC_P9,   KC_PPLS, 
         KC_CAPS, KC_A,   KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT,                                    KC_P4,    KC_P5,    KC_P6, 
@@ -262,27 +262,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LALT, KC_LGUI,                           KC_SPC,                             KC_RGUI,MO(MAC_FN),KC_RALT,KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,     KC_P0,              KC_PDOT),
 
     [MAC_FN]   = LAYOUT_all(/* Layer 4 */
-        QK_BOOT,          KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_F13,  KC_F14,  KC_F15,                            RGB_MOD,
-        DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, NK_ON,   NK_OFF,  RGB_TOG,    RGB_SAI, RGB_HUI, RGB_MOD,     KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2, 
-        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_SAD, RGB_HUD, RGB_RMOD,    KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U, 
-        CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                   KC_MS_L, KC_BTN3, KC_MS_R, 
-        _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM, _______, _______, _______,          _______,             RGB_VAI,              KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D,  
-        CL_NORM, _______, KC_TGUI,                         _______,                                KC_PC1, _______, KC_PC2,   KC_TPC,    RGB_SPD, RGB_VAD, RGB_SPI,     KC_BTN1,       KC_BTN2)
+                                                                                                                                                                            KC_1, KC_2, KC_3,
+        QK_BOOT,          KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_0,    KC_F13, KC_F14, KC_F15, 
+        DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, _______, _______, _______,    BL_ON,   BL_TOGG,  BL_STEP,     KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2, 
+        _______, _______, KC_WINM, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,    BL_OFF,  BL_BRTG,  KC_STER,     _______, KC_MS_U, _______, KC_WH_U, 
+        CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                    KC_MS_L, _______, KC_MS_R, 
+        _______, _______, _______, _______, _______, _______, _______, _______, KC_MACM, _______, _______, _______,          _______,             BL_INC,                _______, KC_MS_D, _______, KC_WH_D, 
+        CL_NORM, _______, KC_TGUI,                         _______,                               _______, _______, _______, _______,    KC_SPDD, BL_DEC, KC_SPDI,       KC_BTN1,           KC_BTN2)
     };
+
 
 //-----------------------------------------------------------------
-#ifdef JOYSTICK_ENABLE
-    joystick_config_t joystick_axes[JOYSTICK_AXIS_COUNT] = {
-    //    [0] = JOYSTICK_AXIS_IN_OUT(C3, B8, 900, 575, 285), 
-    //    [0] = JOYSTICK_AXIS_IN(A0, 256, 512, 700),
-        [0] = JOYSTICK_AXIS_VIRTUAL,
-        [1] = JOYSTICK_AXIS_VIRTUAL    
-    };
 
-    static bool precision = false;
-    static uint16_t precision_mod = 1023;
-    static uint16_t axis_val = 2047;
-#endif
+joystick_config_t joystick_axes[JOYSTICK_AXIS_COUNT] = {
+//    [0] = JOYSTICK_AXIS_IN_OUT(C3, B8, 900, 575, 285), 
+//    [0] = JOYSTICK_AXIS_IN(A0, 256, 512, 700),
+    [0] = JOYSTICK_AXIS_VIRTUAL,
+    [1] = JOYSTICK_AXIS_VIRTUAL    
+};
+
+static bool precision = false;
+static uint16_t precision_mod = 1023;
+static uint16_t axis_val = 2047;
+
 //-----------------------------------------------------------------
 //#if defined(VIA_ENABLE) && defined(ENCODER_ENABLE)
 #ifdef ENCODER_MAP_ENABLE
@@ -383,12 +385,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     finished_timer = true;
 
-#ifdef JOYSTICK_ENABLE
     int16_t precision_val = axis_val;
     if (precision) {
         precision_val -= precision_mod;
     }    
-#endif
 
     switch (keycode) {
         case KC_TGUI:
@@ -528,7 +528,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return true; 
 
-#ifdef JOYSTICK_ENABLE
+
+
         case KC_P8:
             joystick_set_axis(1, record->event.pressed ? -precision_val : 0);
             return false;
@@ -544,7 +545,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_P0:
             precision = record->event.pressed;
             return false;
-#endif
+
+
+
 
         default:
             return true;   // Process all other keycodes normally        
@@ -552,8 +555,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
     ;
 }
-//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 bool isRecording = false;           // dynamic macro LED
 bool isRecordingLedOn = false;
 static uint16_t recording_timer;
@@ -571,7 +574,6 @@ static uint16_t recording_timer;
     LEADER_EXTERNS();
 #endif
 
-//---------------------------
 void matrix_scan_user(void) {
     
     if (kvm_sel_on == true){
@@ -683,21 +685,14 @@ void leader_end_user(void){
 // __attribute__ ((weak)) 
 bool rgb_matrix_indicators_user(void)  {
 
-    if (isRecordingLedOn) { 
-        rgb_matrix_set_color(37, 0x40, 0x0, 0x40);            
-    }
-    if (bootloader_mode) { 
-        rgb_matrix_set_color(0, 0x40, 0x0, 0x40);            
-    }
-
     switch (kvm_pc_sel) {
         case 0:
             switch (kvm_sel_on) {
                 case 0:
-                    rgb_matrix_set_color(108,20,0,20);
+                    rgb_matrix_set_color(19,0,0,40);
                     break;
                 case 1:
-                    rgb_matrix_set_color(108,0,0,20);    
+                    rgb_matrix_set_color(19,40,0,40);    
                     break;           
             }
         break;
@@ -705,10 +700,10 @@ bool rgb_matrix_indicators_user(void)  {
         case 1:
             switch (kvm_sel_on) {
                 case 0:
-                    rgb_matrix_set_color(106,20,0,20);
+                    rgb_matrix_set_color(20,0,0,40);
                     break;
                 case 1:
-                    rgb_matrix_set_color(106,0,0,20);    
+                    rgb_matrix_set_color(20,40,0,40);    
                     break;           
             }
             break;           
@@ -857,12 +852,10 @@ static void render_rgbled_status(void) {
             oled_write(get_u8_str(get_current_wpm(), '0'), false);  //예제 키보드= adpenrose-akemipad
     }
 
-#ifndef  OLED_DISPLAY_128X64
-    return;
-#endif
-
     oled_set_cursor(0, 4);
     oled_rgb_mode();
+
+    
 }
 
 // 참고키보드 = 0xcb-1377, 0xcb-STATIC, adafruit-macropad
