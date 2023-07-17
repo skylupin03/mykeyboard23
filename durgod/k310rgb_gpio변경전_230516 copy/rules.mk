@@ -43,11 +43,10 @@ WPM_ENABLE = yes
 
 TAP_DANCE_ENABLE = yes      # Tappa Dance
 
-ENCODER_ENABLE = yes        # Enable Encoder
-ENCODER_MAP_ENABLE = yes
-#DIP_SWITCH_ENABLE = yes	# DIP Switch
+#ENCODER_ENABLE = yes        # Enable Encoder
+#ENCODER_MAP_ENABLE = yes
+##DIP_SWITCH_ENABLE = yes
 
-# Use RAM (fake EEPROM, transient) instead of real EEPROM
 ##EEPROM_DRIVER = transient
 
 OLED_ENABLE = yes			# +5568(0x15C0)byte
@@ -58,13 +57,7 @@ OLED_ENABLE = yes			# +5568(0x15C0)byte
 
 #WATCHDOG_ENABLE = no		# Resets keyboard if matrix_scan isn't run every 250ms//
 
-#AUTO_SHIFT_ENABLE = yes
-#KEY_LOCK_ENABLE = yes
-#CAPS_WORD_ENABLE = yes
-#LEADER_ENABLE = yes
-
-#JOYSTICK_ENABLE = yes		# #define HAL_USE_ADC TRUE(halconf.h) / STM32_ADC_USE_ADCx (mcuconf.h)
-#JOYSTICK_DRIVER = digital
-#JOYSTICK_DRIVER = analog
-#SRC += analog.c
-
+AUTO_SHIFT_ENABLE = yes
+KEY_LOCK_ENABLE = yes
+CAPS_WORD_ENABLE = yes
+LEADER_ENABLE = yes

@@ -49,10 +49,7 @@
 
 #define TAPPING_TERM 175                //////////////////////////////////////////////////
 
-/* LED indicator pins */
-// #define LED_COMPOSE_PIN   C9
-// #define LED_KANA_PIN A8
-
+/* LED indicator pins */  
 #define LED_CAPS_LOCK_PIN   C9
 #define LED_SCROLL_LOCK_PIN A8
 #define LED_NUM_LOCK_PIN    C8
@@ -70,10 +67,10 @@
 
 /* Encoder used pins */
 #define ENCODERS_PAD_A { C13 }  //
-#define ENCODERS_PAD_B { C14 }   // { C14 } { C3 } 
+#define ENCODERS_PAD_B { C14 }    // { C3 }   // { C14 }
 /* Specifies the number of pulses the encoder registers between each detent */
 #define ENCODER_RESOLUTION 2       //#define ENCODER_RESOLUTIONS { 2, 2 }  //4
-#define ENCODER_DIRECTION_FLIP
+//#define ENCODER_DIRECTION_FLIP
 //#define ENCODER_DEFAULT_POS 0x3
 
 /* DIP switch */
@@ -195,12 +192,12 @@
 */
 
 // DRIVER_LED_TOTAL --> RGB_MATRIX_LED_COUNT
-#define RGB_MATRIX_LED_COUNT 113    // 168    //147       // for RGB matrix //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
-    #define RGBLED_NUM 113      // 168      //147          // 이값이위와 틀리니 USB가 끊어짐?
+#define RGB_MATRIX_LED_COUNT 111  //168    //147       // for RGB matrix //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
+    #define RGBLED_NUM 111      //168      //147          // 이값이위와 틀리니 USB가 끊어짐?
 
 #define RGB_MATRIX_DEFAULT_VAL 20           //#define RGB_MATRIX_STARTUP_VAL 50
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200
-#define RGB_MATRIX_CENTER { 90, 30 }
+#define RGB_MATRIX_CENTER   {94,21}           // { 105, 30 }
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
 #define RGB_MATRIX_KEYPRESSES
 #define RGB_DISABLE_WHEN_USB_SUSPENDED  // turn off effects when suspended

@@ -25,6 +25,7 @@ METABLE K310       = 0xF010
 METABLE K310 LED = 0xF011
 K310RGB Metable_Pulsar Develope = 0xF012
 METABLE K310 RGB = 0xF013 (230710)
+Pulsar CNC = 0xF014(230711)
 
 METABLE K30 RGB = 0xF020		(1 encoder)
 METABLE K20 RGB = 0xF021           (waycos에서 개발했던것 2 encoder)

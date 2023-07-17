@@ -15,34 +15,16 @@
  */
 
 #include QMK_KEYBOARD_H
-#include "analog.h"
 
 #ifdef OLED_ENABLE      
     static void render_logo_font(void);
     void oled_rgb_mode(void);
 #endif
 
-    uint16_t        startup_timer;
-    static bool     finished_timer  = false;
-    static bool     bootloader_mode = false;
+    uint16_t    startup_timer;
+    static bool finished_timer  = false;
+    static bool bootloader_mode = false;
 
-    static bool     kvm_pc_sel      = false;
-    static uint16_t kvm_timer;
-    static bool     kvm_sel_on      = false;
-
-#define kvm_deadtime    100
-
-//------------------------------
-typedef union {
-    uint32_t raw;
-    struct {
-        bool     eeprom_kvm_pc_sel :1;
-    };
-} user_config_t;
-
-user_config_t user_config;
-
-//-=-------------------------------------------
     // Layer shorthand
     enum _layer { WIN_BASE = 0, WIN_FN, MAC_BASE, MAC_FN };
 
@@ -67,9 +49,6 @@ user_config_t user_config;
         KC_SPDI,            // LED effect speed up
         KC_SPDD,            // LED effect speed down
         KC_TKEY,            // all key input off
-        KC_PC1,             // KM Switch PC1
-        KC_PC2,             // KM Switch PC2
-        KC_TPC,             // KM Switch PC1<-->PC2 Toggle
         NEW_SAFE_RANGE = SAFE_RANGE
 #else
     KC_TGUI = SAFE_RANGE,   // Toggle between GUI Lock or Unlock
@@ -91,9 +70,6 @@ KC_LOCK_SCREEN,         // MAC_key
     KC_SPDI,                // LED effect speed up
     KC_SPDD,                // LED effect speed down
     KC_TKEY,                // all key input off
-    KC_PC1,                 // KM Switch PC1
-    KC_PC2,                 // KM Switch PC2
-    KC_TPC,                 // KM Switch PC1<-->PC2 Toggle    
     NEW_SAFE_RANGE
 #endif
     };
@@ -104,8 +80,8 @@ KC_LOCK_SCREEN,         // MAC_key
 #define KC_WINM KC_WIN_MODE
 #define KC_MACM KC_MAC_MODE
 
-#define KC_MCTL KC_MISSION_CONTROL  // 최신 QMK에 추가된듯
-#define KC_LPAD KC_LAUNCHPAD        //        
+#define KC_MCTL KC_MISSION_CONTROL
+#define KC_LPAD KC_LAUNCHPAD
 
 #define KC_SPLT KC_SPOTLIGHT
 #define KC_SIRI KC_DICTATION
@@ -116,8 +92,6 @@ KC_LOCK_SCREEN,         // MAC_key
 //#define KC_FLXP KC_FILE_EXPLORER
 #define KC_TASK LGUI(KC_TAB)
 #define KC_FLXP LGUI(KC_E)
-#define KC_DIC  LGUI(KC_H)    // 받아쓰기
-#define KC_LOCK2 LGUI(KC_L)   // pc잠금
 
 // Tap dance declarations (These must go above the keymaps)
 enum {
@@ -127,221 +101,127 @@ enum {
     TD_4,
     TD_5
 };
+
 void dance_test(qk_tap_dance_state_t *state, void *user_data){
     if(state->count >=5){
         SEND_STRING("Tap Dance Test ok!");
         reset_tap_dance(state);
     }
 }
+
 // Tapdance definitions. Tap Dance F Keys.
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_NLCK_CALC] = ACTION_TAP_DANCE_DOUBLE(KC_NUM_LOCK, KC_CALC),
+  [TD_NLCK_CALC] = ACTION_TAP_DANCE_DOUBLE(KC_NUM_LOCK, KC_CALC),
     [TD_2] = ACTION_TAP_DANCE_DOUBLE(KC_MPLY, KC_MSEL),
     [TD_3] = ACTION_TAP_DANCE_DOUBLE(KC_FLXP, KC_MYCM),
     [TD_4] = ACTION_TAP_DANCE_DOUBLE(KC_MSEL, KC_MAIL),
     [TD_5] = ACTION_TAP_DANCE_FN(dance_test),
 };
 
-void kvm_switch(bool pc_num){
-    writePinHigh(GPIO_KM_OE);
-    writePinLow(GPIO_KM_PWEN);
-    if (!pc_num) writePinLow(GPIO_KM_SEL);
-    else   writePinHigh(GPIO_KM_SEL);
-    writePinLow(GPIO_KM_OE);
-
-    kvm_timer = timer_read();
-    kvm_sel_on = true;
-    // while (timer_elapsed(kvm_timer) < 1000) {
-    // }
-    // writePinHigh(GPIO_KM_PWEN);
-// 키보드 리셋이 필요
-};
-
-void keyboard_pre_init_user(void) {
-    // kvm_pc_sel = 0;
-    // kvm_switch(kvm_pc_sel);
-};
-//------------------------------------------
-void keyboard_post_init_user(void) {
-    // Read the user config from EEPROM
-    // kvm_pc_sel = 0;
-    // kvm_switch(kvm_pc_sel);
-
-    user_config.raw = eeconfig_read_user();
-    kvm_pc_sel      = user_config.eeprom_kvm_pc_sel;
-    kvm_switch(kvm_pc_sel);
-}
-
-//-------------------------------------------------------------------------------------------------------
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    /* Keymap _BASE: Base Layer (Default Layer)
-      * ┌───┐   ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┐
-      * │Esc│   │F1 │F2 │F3 │F4 │ │F5 │F6 │F7 │F8 │ │F9 │F10│F11│F12│ │PSc│Slk│Pse│
-      * └───┘   └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┘
-      * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───────┐ ┌───┬───┬───┐ ┌───┬───┬───┬───┐
-      * │ ` │ 1 │ 2 │ 3 │ 4 │ 5 │ 6 │ 7 │ 8 │ 9 │ 0 │ - │ = │ Backsp│ │Ins│Hom│PgU│ │Num│ / │ * │ - │
-      * ├───┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─────┤ ├───┼───┼───┤ ├───┼───┼───┼───┤
-      * │ Tab │ Q │ W │ E │ R │ T │ Y │ U │ I │ O │ P │ [ │ ] │  \  │ │Del│End│PgD│ │ 7 │ 8 │ 9 │   │
-      * ├─────┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬┈┈┈┈┤ └───┴───┴───┘ ├───┼───┼───┤ + │
-      * │ Caps │ A │ S │ D │ F │ G │ H │ J │ K │ L │ ; │ ' │ # │Entr│               │ 4 │ 5 │ 6 │   │
-      * ├────┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴───┴────┤     ┌───┐     ├───┼───┼───┼───┤
-      * │Shft│ \ │ Z │ X │ C │ V │ B │ N │ M │ , │ . │ / │    Shift │     │ ↑ │     │ 1 │ 2 │ 3 │   │
-      * ├────┼───┴┬──┴─┬─┴───┴───┴───┴───┴───┴──┬┴───┼───┴┬────┬────┤ ┌───┼───┼───┐ ├───┴───┼───┤Ent│
-      * │Ctrl│GUI │Alt │                        │ Alt│Func│ App│Ctrl│ │ ← │ ↓ │ → │ │   0   │ . │   │
-      * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘ └───┴───┴───┘ └───────┴───┴───┘
-        KC_ESC,           KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_PSCR, KC_SCRL, KC_PAUS,
-        KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,  TD(TD_NLCK_CALC),KC_PSLS,KC_PAST,KC_PMNS,
-        KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,    KC_P7,   KC_P8,   KC_P9,   KC_PPLS,
-        RALT_T(KC_CAPS), KC_A, KC_S, KC_D,   KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT,                                  KC_P4,   KC_P5,   KC_P6,
-        OSM(MOD_LSFT), KC_NUBS, KC_Z, KC_X, KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,             KC_UP,               KC_P1,   KC_P2,   KC_P3,   KC_PENT,
-        OSM(MOD_LCTL), OSM(MOD_LGUI), OSM(MOD_LALT),          KC_SPC,                             KC_RALT,MO(WIN_FN),KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
-      */
-     [WIN_BASE] = LAYOUT_all(/* Base Layer */
-        KC_ESC,   KC_F1, KC_F2, KC_F3, KC_F4,    KC_F5, KC_F6, KC_F7, KC_F8,   KC_F9, KC_F10, KC_F11, KC_F12,    KC_PSCR, KC_SCRL, KC_PAUS,                         KC_MUTE,
-        KC_GRV,  KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL,       KC_BSPC,     KC_INS, KC_HOME, KC_PGUP,     TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS, 
-        KC_TAB,     KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC,    KC_BSLS,     KC_DEL, KC_END, KC_PGDN,     KC_P7, KC_P8, KC_P9, KC_PPLS, 
-        KC_CAPS,  KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_NUHS,    KC_ENT,                                  KC_P4, KC_P5, KC_P6, 
-        KC_LSFT,     KC_NUBS, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,    KC_RSFT,              KC_UP,              KC_P1, KC_P2, KC_P3, KC_PENT, 
-        KC_LCTL, KC_LGUI, KC_LALT,                 KC_SPC,              KC_RALT, MO(WIN_FN), KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0, KC_PDOT),
-    /* Keymap _FN: Function Layer
-      * ┌───┐   ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┐
-      * │Firm   │Ply│Stp│Prv│Nxt│ │Mut│Vo+│Vo-│   │ │   │   │   │   │ │   │   │   │
-      * └───┘   └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┘
-      * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───────┐ ┌───┬───┬───┐ ┌───┬───┬───┬───┐
-      * │   │   │   │   │   │   │   │   │   │   │   │   │   │       │ │   │   │   │ │   │   │   │   │
-      * ├───┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─────┤ ├───┼───┼───┤ ├───┼───┼───┼───┤
-      * │     │   │   │   │   │   │   │   │   │   │   │   │   │     │ │   │   │   │ │   │   │   │   │
-      * ├─────┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬┈┈┈┈┤ └───┴───┴───┘ ├───┼───┼───┤   │
-      * │      │   │   │   │   │   │   │   │   │   │   │   │   │    │               │   │   │   │   │
-      * ├────┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴───┴────┤     ┌───┐     ├───┼───┼───┼───┤
-      * │    │   │   │   │   │   │   │   │   │   │   │   │          │     │   │     │   │   │   │   │
-      * ├────┼───┴┬──┴─┬─┴───┴───┴───┴───┴───┴──┬┴───┼───┴┬────┬────┤ ┌───┼───┼───┐ ├───┴───┼───┤   │
-      * │    │Lock│    │                        │    │Func│ Sys│    │ │   │   │   │ │       │   │   │
-      * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘ └───┴───┴───┘ └───────┴───┴───┘
-                                파일탐색기  soso                                                                    OK       xxx        xxx        MAC        MAC     xxx        WIN      WIN     (WIN+H) (WIN+L)
-                        win-tap   win-e  내PC              브라우져홈        플레이어 Previous   play     Next     검색_서치 컨트롤패널 런치어시스트 미션컨트롤 런치패드 Favorites     뒤로     앞으로  받아쓰기 계정잠금
-    KC_BRID, KC_BRIU, KC_TASK, KC_FLXP, KC_MYCM, KC_MAIL, KC_WOME, KC_CALC, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT,  KC_WSCH,   KC_CPNL, KC_ASST,  KC_MCTL, KC_LPAD,   KC_WFAV,   KC_WBAK,  KC_WFWD, KC_DIC, KC_LOCK2  
-    TD(TD_2),TD(TD_5),KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_TASK,TD(TD_3),TD(TD_4), KC_BRIU, KC_BRID, 
-    KC_BRID, KC_BRIU, KC_TASK, KC_FLXP,  KC_MYCM, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_MAIL, KC_CALC,  KC_WSCH,   KC_WHOM, KC_WBAK,  KC_WFWD,     
-*/
-     [WIN_FN] = LAYOUT_all(/* Function Layer */
-        QK_BOOT,          KC_BRID, KC_BRIU, KC_TASK, KC_FLXP,  KC_DIC, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_WHOM, KC_CALC,   KC_WSCH,   KC_WBAK, KC_WFWD, KC_LOCK2,                           RGB_MOD,
-        DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______,   NK_ON,  NK_OFF,   RGB_TOG,   RGB_SAI, RGB_HUI, RGB_MOD,      KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
-        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, _______, _______, _______, _______, _______, _______,   _______,   RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
-        CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______,                                   KC_MS_L, KC_BTN3, KC_MS_R,
-        _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM,  _______, _______, _______,           _______,            RGB_VAI,               KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D, 
-        CL_NORM, KC_TGUI, _______,                             _______,                             KC_PC1, _______, KC_PC2,    KC_TPC,   RGB_SPD, RGB_VAD, RGB_SPI,      KC_BTN1,       KC_BTN2),
-/*                 
-                                        미션컨트롤 스포트라이트 딕테이션 Xdisturb                                                        LAUNCHPAD         lock-screen
-                        KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,    KC_LPAD, KC_SCRL, KC_LOCK_,
-                                                            KC_DIC(WIN+H)                                                                               KC_LOCK2(WIN+L)
-*/
-    [MAC_BASE] = LAYOUT_all(/* Layer 3 */ 
-        KC_ESC,          KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,    KC_LPAD, KC_SCRL, KC_LOCK_,                          KC_MUTE,
-        KC_GRV,  KC_1,   KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,     TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS, 
-        KC_TAB,  KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,     KC_P7,    KC_P8,    KC_P9,   KC_PPLS, 
-        KC_CAPS, KC_A,   KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT,                                    KC_P4,    KC_P5,    KC_P6, 
-        KC_LSFT, KC_NUBS, KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M, KC_COMM,    KC_DOT,  KC_SLSH,          KC_RSFT,             KC_UP,                KC_P1,    KC_P2,    KC_P3,   KC_PENT, 
-        KC_LCTL, KC_LALT, KC_LGUI,                           KC_SPC,                             KC_RGUI,MO(MAC_FN),KC_RALT,KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,     KC_P0,              KC_PDOT),
+  /* Keymap _BASE: Base Layer (Default Layer)
+   * ┌───┐   ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┐
+   * │Esc│   │F1 │F2 │F3 │F4 │ │F5 │F6 │F7 │F8 │ │F9 │F10│F11│F12│ │PSc│Slk│Pse│
+   * └───┘   └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┘
+   * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───────┐ ┌───┬───┬───┐ ┌───┬───┬───┬───┐
+   * │ ` │ 1 │ 2 │ 3 │ 4 │ 5 │ 6 │ 7 │ 8 │ 9 │ 0 │ - │ = │ Backsp│ │Ins│Hom│PgU│ │Num│ / │ * │ - │
+   * ├───┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─────┤ ├───┼───┼───┤ ├───┼───┼───┼───┤
+   * │ Tab │ Q │ W │ E │ R │ T │ Y │ U │ I │ O │ P │ [ │ ] │  \  │ │Del│End│PgD│ │ 7 │ 8 │ 9 │   │
+   * ├─────┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬┈┈┈┈┤ └───┴───┴───┘ ├───┼───┼───┤ + │
+   * │ Caps │ A │ S │ D │ F │ G │ H │ J │ K │ L │ ; │ ' │ # │Entr│               │ 4 │ 5 │ 6 │   │
+   * ├────┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴───┴────┤     ┌───┐     ├───┼───┼───┼───┤
+   * │Shft│ \ │ Z │ X │ C │ V │ B │ N │ M │ , │ . │ / │    Shift │     │ ↑ │     │ 1 │ 2 │ 3 │   │
+   * ├────┼───┴┬──┴─┬─┴───┴───┴───┴───┴───┴──┬┴───┼───┴┬────┬────┤ ┌───┼───┼───┐ ├───┴───┼───┤Ent│
+   * │Ctrl│GUI │Alt │                        │ Alt│Func│ App│Ctrl│ │ ← │ ↓ │ → │ │   0   │ . │   │
+   * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘ └───┴───┴───┘ └───────┴───┴───┘
 
-    [MAC_FN]   = LAYOUT_all(/* Layer 4 */
-        QK_BOOT,          KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_F13,  KC_F14,  KC_F15,                            RGB_MOD,
-        DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, NK_ON,   NK_OFF,  RGB_TOG,    RGB_SAI, RGB_HUI, RGB_MOD,     KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2, 
-        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_SAD, RGB_HUD, RGB_RMOD,    KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U, 
-        CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                   KC_MS_L, KC_BTN3, KC_MS_R, 
-        _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM, _______, _______, _______,          _______,             RGB_VAI,              KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D,  
-        CL_NORM, _______, KC_TGUI,                         _______,                                KC_PC1, _______, KC_PC2,   KC_TPC,    RGB_SPD, RGB_VAD, RGB_SPI,     KC_BTN1,       KC_BTN2)
-    };
-//-----------------------------------------------------------------
-#ifdef JOYSTICK_ENABLE
-    joystick_config_t joystick_axes[JOYSTICK_AXIS_COUNT] = {
-    //    [0] = JOYSTICK_AXIS_IN_OUT(C3, B8, 900, 575, 285), 
-    //    [0] = JOYSTICK_AXIS_IN(A0, 256, 512, 700),
-        [0] = JOYSTICK_AXIS_VIRTUAL,
-        [1] = JOYSTICK_AXIS_VIRTUAL    
-    };
-
-    static bool precision = false;
-    static uint16_t precision_mod = 1023;
-    static uint16_t axis_val = 2047;
-#endif
-//-----------------------------------------------------------------
-//#if defined(VIA_ENABLE) && defined(ENCODER_ENABLE)
-#ifdef ENCODER_MAP_ENABLE
-
-// #define NUM_ENCODERS 2
-const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
-    [WIN_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [WIN_FN]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI) },
-    [MAC_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-    [MAC_FN]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI) }
+      KC_ESC,           KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_PSCR, KC_SCRL, KC_PAUS,
+      KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,    TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS,
+      KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,    KC_P7,   KC_P8,   KC_P9,   KC_PPLS,
+      RALT_T(KC_CAPS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT,                                   KC_P4,   KC_P5,   KC_P6,
+      OSM(KC_LSFT), KC_NUBS, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,             KC_UP,               KC_P1,   KC_P2,   KC_P3,   KC_PENT,
+      KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPC,                             KC_RALT,MO(WIN_FN),KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
+  ),
+  OSM(MOD_LGUI) --> 이키는 락기능에서 손봐야 함
+   */
+  [WIN_BASE] = LAYOUT_all( /* Base Layer */
+      KC_ESC,           KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_PSCR, KC_SCRL, KC_PAUS,
+      KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,  TD(TD_NLCK_CALC),KC_PSLS,KC_PAST,KC_PMNS,
+      KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,    KC_P7,   KC_P8,   KC_P9,   KC_PPLS,
+      RALT_T(KC_CAPS), KC_A, KC_S, KC_D,   KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT,                                  KC_P4,   KC_P5,   KC_P6,
+      OSM(MOD_LSFT), KC_NUBS, KC_Z, KC_X, KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,             KC_UP,               KC_P1,   KC_P2,   KC_P3,   KC_PENT,
+      OSM(MOD_LCTL), OSM(MOD_LGUI), OSM(MOD_LALT),          KC_SPC,                             KC_RALT,MO(WIN_FN),KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
+  ),
+  /* Keymap _FN: Function Layer
+   * ┌───┐   ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┐
+   * │Firm   │Ply│Stp│Prv│Nxt│ │Mut│Vo+│Vo-│   │ │   │   │   │   │ │   │   │   │
+   * └───┘   └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┴───┘ └───┴───┴───┘
+   * ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───────┐ ┌───┬───┬───┐ ┌───┬───┬───┬───┐
+   * │   │   │   │   │   │   │   │   │   │   │   │   │   │       │ │   │   │   │ │   │   │   │   │
+   * ├───┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─────┤ ├───┼───┼───┤ ├───┼───┼───┼───┤
+   * │     │   │   │   │   │   │   │   │   │   │   │   │   │     │ │   │   │   │ │   │   │   │   │
+   * ├─────┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬┈┈┈┈┤ └───┴───┴───┘ ├───┼───┼───┤   │
+   * │      │   │   │   │   │   │   │   │   │   │   │   │   │    │               │   │   │   │   │
+   * ├────┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴───┴────┤     ┌───┐     ├───┼───┼───┼───┤
+   * │    │   │   │   │   │   │   │   │   │   │   │   │          │     │   │     │   │   │   │   │
+   * ├────┼───┴┬──┴─┬─┴───┴───┴───┴───┴───┴──┬┴───┼───┴┬────┬────┤ ┌───┼───┼───┐ ├───┴───┼───┤   │
+   * │    │Lock│    │                        │    │Func│ Sys│    │ │   │   │   │ │       │   │   │
+   * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘ └───┴───┴───┘ └───────┴───┴───┘
+   *
+   *  EE_CLR,  QK_RBT,
+   *
+   *     [MAC_FN] = LAYOUT(RGB_TOG, RGB_MOD,  RGB_RMOD, KC_TRNS,   RGB_SPI, BL_STEP,RGB_SPD,
+                      RGB_HUI, RGB_M_P,  RGB_M_SN, RGB_M_T,
+                      RGB_HUD, RGB_M_B,  RGB_M_K,  RGB_M_TW,
+                      RGB_SAI, RGB_M_R,  RGB_M_X,
+                      RGB_SAD, RGB_M_SW, RGB_M_G,  QK_BOOT,
+                      RGB_VAI,           RGB_VAD)
+[WIN_FN] = LAYOUT_all( // Function Layer 
+      QK_BOOT,          KC_MPLY, KC_MSTP, KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_TASK, KC_FLXP, KC_MSEL, KC_BRIU, KC_BRID,    _______, NK_ON, NK_OFF,
+      DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_TOG, RGB_HUI, RGB_MOD,    KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
+      _______, _______, KC_WINM, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_SAI, RGB_HUD, RGB_RMOD,    _______, KC_MS_U, _______, KC_WH_U,
+      CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                  KC_MS_L, _______, KC_MS_R,
+      _______, _______, _______, _______, _______, _______, _______, _______, KC_MACM, _______, _______, _______,          _______,             RGB_VAI,             _______, KC_MS_D, _______, KC_WH_D,
+      CL_NORM, KC_TGUI, _______,                            _______,                            _______, _______, _______, _______,    RGB_SPD, RGB_VAD, RGB_SPI,    KC_BTN1,          KC_BTN2
+  ),
+   */
+  [WIN_FN] = LAYOUT_all( /* Function Layer */
+      QK_BOOT,          TD(TD_2),TD(TD_5), KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,KC_TASK,TD(TD_3),TD(TD_4), KC_BRIU, KC_BRID,    RGB_TOG,   NK_ON,  NK_OFF,
+      DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, _______, _______,  EE_CLR,    RGB_SAI, RGB_HUI, RGB_MOD,    KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
+      _______, _______, KC_WINM, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,  QK_RBT,    RGB_SAD, RGB_HUD, RGB_RMOD,   KC_BTN4, KC_MS_U,  KC_BTN5, KC_WH_U,
+      CL_SWAP, DT_DOWN, DT_UP, _______, DT_PRNT, _______, _______, _______, _______, QK_LOCK, _______,  _______, _______, _______,                                 KC_MS_L, KC_BTN3,  KC_MS_R,
+        AS_ON, _______, AS_DOWN,   AS_UP, CW_TOGG, AS_RPT, _______, _______, KC_MACM, _______,   OS_ON,  OS_OFF,           AS_OFF,              RGB_VAI,             KC_WH_L, KC_MS_D,  KC_WH_R, KC_WH_D,
+      CL_NORM, KC_TGUI, _______,                            _______,                            _______, _______, QK_LEAD, _______,    RGB_SPD, RGB_VAD, RGB_SPI,    KC_BTN1,           KC_BTN2
+  ),
+/*
+  [MAC_BASE] = LAYOUT_all( // Layer 3 
+      KC_ESC,           KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,    KC_LPAD, KC_SCRL, KC_LOCK_,
+      KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,    TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS,
+      KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,    KC_P7,   KC_P8,   KC_P9,   KC_PPLS,
+      KC_CAPS, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT,                                   KC_P4,   KC_P5,   KC_P6,
+      KC_LSFT, KC_NUBS, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,             KC_UP,               KC_P1,   KC_P2,   KC_P3,   KC_PENT,
+      KC_LCTL, KC_LALT, KC_LGUI,                            KC_SPC,                             KC_RGUI,MO(MAC_FN),KC_RALT,KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
+  ),
+  */
+  [MAC_BASE] = LAYOUT_all( /* Layer 3 */
+      KC_ESC,           KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,    KC_LPAD, KC_SCRL, KC_LOCK_,
+      KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,    TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS,
+      KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,    KC_P7,   KC_P8,   KC_P9,   KC_PPLS,
+      KC_CAPS, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT,                                   KC_P4,   KC_P5,   KC_P6,
+      KC_LSFT, KC_NUBS, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,             KC_UP,               KC_P1,   KC_P2,   KC_P3,   KC_PENT,
+      KC_LCTL, KC_LALT, KC_LGUI,                            KC_SPC,                             KC_RGUI,MO(MAC_FN),KC_RALT,KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
+  ),
+  [MAC_FN] = LAYOUT_all( /* Layer 4 */
+      QK_BOOT,          KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_F13,   KC_F14,  KC_F15,
+      DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, _______, _______, _______,    BL_ON,   BL_TOGG, BL_STEP,    KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
+      _______, _______, KC_WINM, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,    BL_OFF,  BL_BRTG, KC_STER,    _______, KC_MS_U, _______, KC_WH_U,
+      CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                  KC_MS_L, _______, KC_MS_R,
+        AS_ON, _______, AS_DOWN,   AS_UP, CW_TOGG, OS_ON, OS_OFF, _______, KC_MACM, _______, _______,  AS_RPT,           AS_OFF,                 BL_INC,             _______, KC_MS_D, _______, KC_WH_D,
+      CL_NORM, _______, KC_TGUI,                            _______,                            _______, _______, _______, _______,    KC_SPDD,  BL_DEC, KC_SPDI,    KC_BTN1,          KC_BTN2
+  )
 };
-//#endif
 
-// bool encoder_update_user(uint8_t index, bool clockwise) {
-
-//     if (index == 0) {
-//         if (IS_LAYER_ON(WIN_FN)) {
-//             if (clockwise) {
-//                 tap_code_delay(KC_P8, 10);
-//             } else {
-//                 tap_code_delay(KC_P2, 10);
-//             }
-//         }
-//         else {
-//             if (clockwise) {
-//                 tap_code_delay(KC_VOLU, 10);
-//             } else {
-//                 tap_code_delay(KC_VOLD, 10);
-//             }
-//         }
-//     }
-//     return false;
-// }
-//---------------------------
-#else /////defined(VIA_ENABLE) && defined(ENCODER_ENABLE)  or #ifndef ENCODER_MAP_ENABLE
-
-#define ENCODERS 1
-static uint8_t  encoder_state[ENCODERS] = {0};
-static keypos_t encoder_cw[ENCODERS]    = {{3, 5}};     // key matrix K53
-static keypos_t encoder_ccw[ENCODERS]   = {{1, 5}};     // key matrix K51
-
-void encoder_action_unregister(void) {
-    for (int index = 0; index < ENCODERS; ++index) {
-        if (encoder_state[index]) {
-            keyevent_t encoder_event = (keyevent_t){
-                .key = encoder_state[index] >> 1 ? encoder_cw[index] : encoder_ccw[index],
-                .pressed = false,
-                .time = (timer_read() | 1)
-            };
-            encoder_state[index]     = 0;
-            action_exec(encoder_event);
-        }
-    }
-}
-
-void encoder_action_register(uint8_t index, bool clockwise){
-    keyevent_t encoder_event = (keyevent_t){
-        .key = clockwise ? encoder_cw[index] : encoder_ccw[index],
-        .pressed = true,
-        .time = (timer_read() | 1)
-    };
-    encoder_state[index] = (clockwise ^ 1) | (clockwise << 1);
-    action_exec(encoder_event);
-}
-
-bool encoder_update_user(uint8_t index, bool clockwise) {
-
-    encoder_action_register(index, clockwise);
-    return false;
-}
-
-void matrix_scan_user(void) {
-    
-    encoder_action_unregister();
-}
-#endif///// end of defined(VIA_ENABLE) && defined(ENCODER_ENABLE)
- //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 #define HCS(report) host_consumer_send(record->event.pressed ? report : 0); return false
 #define HSS(report) host_system_send(record->event.pressed ? report : 0); return false
@@ -365,13 +245,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     finished_timer = true;
 
-#ifdef JOYSTICK_ENABLE
-    int16_t precision_val = axis_val;
-    if (precision) {
-        precision_val -= precision_mod;
-    }    
-#endif
-
     switch (keycode) {
         case KC_TGUI:
             if (record->event.pressed) { // Toggle GUI lock on key press
@@ -380,6 +253,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
             
+        case OSM(MOD_LGUI):
         case KC_LGUI:
             if (win_key_locked) { return false; }
             else{ return true; }
@@ -453,51 +327,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     //     //off_mr_leds();                    
                     //     writePinHigh(LED_MR_LOCK_PIN);
                     //     return true; 
-        case KC_PC1:
-            if (record->event.pressed) { // Toggle GUI lock on key press
-                        // writePinHigh(LED_MR_LOCK_PIN);
-                if (kvm_pc_sel) {
-                    kvm_pc_sel = 0;
-                    kvm_switch(0);
-
-                    user_config.eeprom_kvm_pc_sel = kvm_pc_sel; // 
-                    eeconfig_update_user(user_config.raw); // Writes the new status to EEPROM                    
-                }
-            }
-                return false;            
-//           else {
-//                return true;
-//            }
-        case KC_PC2:
-            if (record->event.pressed) { // Toggle GUI lock on key press
-                    // writePinLow(LED_MR_LOCK_PIN);
-                if (!kvm_pc_sel){
-                    kvm_pc_sel = 1;
-                    kvm_switch(1);     
-
-                    user_config.eeprom_kvm_pc_sel = kvm_pc_sel; // 
-                    eeconfig_update_user(user_config.raw); // Writes the new status to EEPROM        
-                }
-                return false;
-            }
-            else {
-                return true;
-            }
-        case KC_TPC:
-            if (record->event.pressed) { // Toggle GUI lock on key press
-                kvm_pc_sel = !kvm_pc_sel;                   
-                if (kvm_pc_sel) kvm_switch(1);
-                else kvm_switch(0);
-                // if (kvm_pc_sel) writePinLow(LED_MR_LOCK_PIN);
-                // else                        writePinHigh(LED_MR_LOCK_PIN);                
-                user_config.eeprom_kvm_pc_sel = kvm_pc_sel; // 
-                eeconfig_update_user(user_config.raw); // Writes the new status to EEPROM 
-            }
-            return false;             
-            // else {
-            //     return true;
-            // }
-
+                        
         case QK_BOOT:
             if (record->event.pressed) {
                 #ifdef OLED_ENABLE
@@ -510,60 +340,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return true; 
 
-#ifdef JOYSTICK_ENABLE
-        case KC_P8:
-            joystick_set_axis(1, record->event.pressed ? -precision_val : 0);
-            return false;
-        case KC_P2:
-            joystick_set_axis(1, record->event.pressed ? precision_val : 0);
-            return false;
-        case KC_P4:
-            joystick_set_axis(0, record->event.pressed ? -precision_val : 0);
-            return false;
-        case KC_P6:
-            joystick_set_axis(0, record->event.pressed ? precision_val : 0);
-            return false;
-        case KC_P0:
-            precision = record->event.pressed;
-            return false;
-#endif
-
         default:
             return true;   // Process all other keycodes normally        
     }
-    return true;
-    ;
+    return false;
 }
-//-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 bool isRecording = false;           // dynamic macro LED
 bool isRecordingLedOn = false;
 static uint16_t recording_timer;
-
-#ifdef AUTO_SHIFT_ENABLE
-    bool isAutoShiftOn = false;         // AutoShift function LED
-    bool AutoShiftLED  = false;
-    static uint16_t AutoShift_timer;
-#endif
+bool isAutoShiftOn = false;         // AutoShift function LED
+bool AutoShiftLED  = false;
+static uint16_t AutoShift_timer;
 
 //static bool win_key_locked = false;
 //extern static bool win_key_locked;
 
-#ifdef LEADER_ENABLE
-    LEADER_EXTERNS();
-#endif
+LEADER_EXTERNS();
 
-//---------------------------
 void matrix_scan_user(void) {
     
-    if (kvm_sel_on == true){
-        if (timer_elapsed(kvm_timer) > kvm_deadtime ) {
-            writePinHigh(GPIO_KM_PWEN);
-            kvm_sel_on = false;
-        }
-    }
-
-#ifdef LEADER_ENABLE
     LEADER_DICTIONARY() {
         leading = false;
         leader_end();
@@ -591,9 +388,6 @@ void matrix_scan_user(void) {
             soft_reset_keyboard();      // reset_keyboard()
         }
     }
-#endif
-
-#ifdef AUTO_SHIFT_ENABLE     
     if (get_autoshift_state()){
         if(isAutoShiftOn){
             if(timer_elapsed(AutoShift_timer) >500){
@@ -620,9 +414,8 @@ void matrix_scan_user(void) {
             case MAC_FN:        
                 writePinLow(LED_MR_LOCK_PIN);
             break;
-        }
     }
-#endif
+}
 
     if (isRecording){
         if(timer_elapsed(recording_timer) > 500)
@@ -651,6 +444,16 @@ void dynamic_macro_record_end_user(int8_t direction)
 }
 //----------------------------------
 
+// void rgb_matrix_indicators_user(void)
+// {
+
+// }
+
+bool rgb_matrix_indicators_user(void)
+{
+    return TRUE;
+}
+
 void leader_start_user(void){
 //    writePinLow(LED_MR_LOCK_PIN); //동작안함
 }
@@ -658,47 +461,6 @@ void leader_start_user(void){
 void leader_end_user(void){
 //    writePinHigh(LED_MR_LOCK_PIN); //동작안함
 }
-
-//---------------------------------------------------------------------------
-#ifdef RGB_MATRIX_ENABLE
-
-// __attribute__ ((weak)) 
-bool rgb_matrix_indicators_user(void)  {
-
-    if (isRecordingLedOn) { 
-        rgb_matrix_set_color(37, 0x40, 0x0, 0x40);            
-    }
-    if (bootloader_mode) { 
-        rgb_matrix_set_color(0, 0x40, 0x0, 0x40);            
-    }
-
-    switch (kvm_pc_sel) {
-        case 0:
-            switch (kvm_sel_on) {
-                case 0:
-                    rgb_matrix_set_color(108,20,0,20);
-                    break;
-                case 1:
-                    rgb_matrix_set_color(108,0,0,20);    
-                    break;           
-            }
-        break;
-
-        case 1:
-            switch (kvm_sel_on) {
-                case 0:
-                    rgb_matrix_set_color(106,20,0,20);
-                    break;
-                case 1:
-                    rgb_matrix_set_color(106,0,0,20);    
-                    break;           
-            }
-            break;           
-    }
-    return TRUE;
-}
-
-#endif
 //---------------------------------------------------------------------------
 
 #ifdef OLED_ENABLE
@@ -788,15 +550,20 @@ void render_info(void){
             oled_write_ln_P(PSTR("error?"), false);
     }
 //    oled_write_P(PSTR("---------------\n"), false);
-      oled_set_cursor(3, 2);   
+      /*  oled_set_cursor(3, 2);   
     // Host Keyboard LED Status
     led_t led_state = host_keyboard_led_state();
     oled_write_P(led_state.num_lock ? PSTR("NUM  ") : PSTR("     "), false);
     oled_write_P(led_state.caps_lock ? PSTR("CAP  ") : PSTR("     "), false);
     oled_write_P(led_state.scroll_lock ? PSTR("SCR  ") : PSTR("     "), false);
+    */
 }
 //---------------------------------------
 static void render_rgbled_status(void) {
+
+    oled_set_cursor(0, 2);
+    oled_rgb_mode();
+/*
     char string[4];
 
     oled_set_cursor(0, 3);
@@ -838,13 +605,7 @@ static void render_rgbled_status(void) {
         oled_write_P(PSTR("RGB off , WPM = "), false);
             oled_write(get_u8_str(get_current_wpm(), '0'), false);  //예제 키보드= adpenrose-akemipad
     }
-
-#ifndef  OLED_DISPLAY_128X64
-    return;
-#endif
-
-    oled_set_cursor(0, 4);
-    oled_rgb_mode();
+    */
 }
 
 // 참고키보드 = 0xcb-1377, 0xcb-STATIC, adafruit-macropad

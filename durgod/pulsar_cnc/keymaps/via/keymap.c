@@ -51,6 +51,7 @@ user_config_t user_config;
         KC_TGUI = USER00,   // Toggle between GUI Lock or Unlock
         KC_WIN_MODE,        // WINDOWS Keyboard로 변경
         KC_MAC_MODE,        // Machintosh Keyboard로 변경
+        KC_TMODE,        // WINDOWS <--> Machintosh
         KC_MISSION_CONTROL, // MAC_key
         KC_LAUNCHPAD,       // MAC_key
         KC_SPOTLIGHT,       // MAC_key
@@ -63,9 +64,6 @@ user_config_t user_config;
         KC_RCMMD,           // MAC_key - right command
         KC_TASK_VIEW,       // for win (gui + tap)
         KC_FILE_EXPLORER,   // for win (gui + e)
-        KC_STER,            // LED effect step reverse
-        KC_SPDI,            // LED effect speed up
-        KC_SPDD,            // LED effect speed down
         KC_TKEY,            // all key input off
         KC_PC1,             // KM Switch PC1
         KC_PC2,             // KM Switch PC2
@@ -75,6 +73,7 @@ user_config_t user_config;
     KC_TGUI = SAFE_RANGE,   // Toggle between GUI Lock or Unlock
     KC_WIN_MODE,             // WINDOWS Keyboard로 변경
     KC_MAC_MODE,             // Machintosh Keyboard로 변경
+    KC_TMODE,             // WINDOWS <--> Machintosh Toggle
     KC_MISSION_CONTROL,     // MAC_key
     KC_LAUNCHPAD,           // MAC_key
 KC_SPOTLIGHT,           // MAC_key
@@ -87,9 +86,6 @@ KC_LOCK_SCREEN,         // MAC_key
     KC_RCMMD,               // MAC_key 불필요한듯
     KC_TASK_VIEW,           // for win (gui + tap)
     KC_FILE_EXPLORER,       // for win (gui + e)
-    KC_STER,                // LED effect step reverse
-    KC_SPDI,                // LED effect speed up
-    KC_SPDD,                // LED effect speed down
     KC_TKEY,                // all key input off
     KC_PC1,                 // KM Switch PC1
     KC_PC2,                 // KM Switch PC2
@@ -104,8 +100,8 @@ KC_LOCK_SCREEN,         // MAC_key
 #define KC_WINM KC_WIN_MODE
 #define KC_MACM KC_MAC_MODE
 
-#define KC_MCTL KC_MISSION_CONTROL  // 최신 QMK에 추가된듯
-#define KC_LPAD KC_LAUNCHPAD        //        
+#define KC_MCTL KC_MISSION_CONTROL
+#define KC_LPAD KC_LAUNCHPAD
 
 #define KC_SPLT KC_SPOTLIGHT
 #define KC_SIRI KC_DICTATION
@@ -197,7 +193,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         OSM(MOD_LCTL), OSM(MOD_LGUI), OSM(MOD_LALT),          KC_SPC,                             KC_RALT,MO(WIN_FN),KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
       */
      [WIN_BASE] = LAYOUT_all(/* Base Layer */
-        KC_ESC,   KC_F1, KC_F2, KC_F3, KC_F4,    KC_F5, KC_F6, KC_F7, KC_F8,   KC_F9, KC_F10, KC_F11, KC_F12,    KC_PSCR, KC_SCRL, KC_PAUS,                         KC_MUTE,
+                                                                                                                                                        KC_PC1, KC_PC2, KC_MUTE,
+        KC_ESC,   KC_F1, KC_F2, KC_F3, KC_F4,    KC_F5, KC_F6, KC_F7, KC_F8,   KC_F9, KC_F10, KC_F11, KC_F12,  KC_TMODE,    KC_PSCR, KC_SCRL, KC_PAUS, 
         KC_GRV,  KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL,       KC_BSPC,     KC_INS, KC_HOME, KC_PGUP,     TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS, 
         KC_TAB,     KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC,    KC_BSLS,     KC_DEL, KC_END, KC_PGDN,     KC_P7, KC_P8, KC_P9, KC_PPLS, 
         KC_CAPS,  KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_NUHS,    KC_ENT,                                  KC_P4, KC_P5, KC_P6, 
@@ -225,9 +222,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_BRID, KC_BRIU, KC_TASK, KC_FLXP,  KC_MYCM, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_MAIL, KC_CALC,  KC_WSCH,   KC_WHOM, KC_WBAK,  KC_WFWD,     
 */
      [WIN_FN] = LAYOUT_all(/* Function Layer */
-        QK_BOOT,          KC_BRID, KC_BRIU, KC_TASK, KC_FLXP,  KC_DIC, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_WHOM, KC_CALC,   KC_WSCH,   KC_WBAK, KC_WFWD, KC_LOCK2,                           RGB_MOD,
+                                                                                                                                            KC_PC1, KC_PC2, RGB_MOD,
+        QK_BOOT,  KC_BRID, KC_BRIU, KC_TASK, KC_FLXP,  KC_DIC, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_WHOM, KC_CALC,   KC_WSCH,  KC_TMODE,  KC_WBAK, KC_WFWD, KC_LOCK2, 
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______,   NK_ON,  NK_OFF,   RGB_TOG,   RGB_SAI, RGB_HUI, RGB_MOD,      KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
-        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, _______, _______, _______, _______, _______, _______,   _______,   RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
+        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, _______, _______, _______, _______, _______, _______,  _______,    RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
         CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______,                                   KC_MS_L, KC_BTN3, KC_MS_R,
         _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM,  _______, _______, _______,           _______,            RGB_VAI,               KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D, 
         CL_NORM, KC_TGUI, _______,                             _______,                             KC_PC1, _______, KC_PC2,    KC_TPC,   RGB_SPD, RGB_VAD, RGB_SPI,      KC_BTN1,       KC_BTN2),
@@ -236,8 +234,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                         KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,    KC_LPAD, KC_SCRL, KC_LOCK_,
                                                             KC_DIC(WIN+H)                                                                               KC_LOCK2(WIN+L)
 */
-    [MAC_BASE] = LAYOUT_all(/* Layer 3 */ 
-        KC_ESC,          KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU,    KC_LPAD, KC_SCRL, KC_LOCK_,                          KC_MUTE,
+    [MAC_BASE] = LAYOUT_all(/* Layer 3 */
+                                                                                                                                                                            KC_PC1, KC_PC2, KC_MUTE,
+        KC_ESC,     KC_BRID, KC_BRIU, KC_MCTL, KC_SPLT, KC_SIRI, KC_DOND, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_TMODE, KC_LPAD, KC_SCRL, KC_LOCK_, 
         KC_GRV,  KC_1,   KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,     TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS, 
         KC_TAB,  KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,     KC_P7,    KC_P8,    KC_P9,   KC_PPLS, 
         KC_CAPS, KC_A,   KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT,                                    KC_P4,    KC_P5,    KC_P6, 
@@ -245,13 +244,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LALT, KC_LGUI,                           KC_SPC,                             KC_RGUI,MO(MAC_FN),KC_RALT,KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,     KC_P0,              KC_PDOT),
 
     [MAC_FN]   = LAYOUT_all(/* Layer 4 */
-        QK_BOOT,          KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_F13,  KC_F14,  KC_F15,                            RGB_MOD,
+                                                                                                                                                                            KC_PC1, KC_PC2, RGB_MOD,
+        QK_BOOT,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12, KC_TMODE,  KC_F13, KC_F14, KC_F15, 
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, NK_ON,   NK_OFF,  RGB_TOG,    RGB_SAI, RGB_HUI, RGB_MOD,     KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2, 
         _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_SAD, RGB_HUD, RGB_RMOD,    KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U, 
         CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                   KC_MS_L, KC_BTN3, KC_MS_R, 
         _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM, _______, _______, _______,          _______,             RGB_VAI,              KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D,  
         CL_NORM, _______, KC_TGUI,                         _______,                                KC_PC1, _______, KC_PC2,   KC_TPC,    RGB_SPD, RGB_VAD, RGB_SPI,     KC_BTN1,       KC_BTN2)
-    };
+        };
+
 //-----------------------------------------------------------------
 #ifdef JOYSTICK_ENABLE
     joystick_config_t joystick_axes[JOYSTICK_AXIS_COUNT] = {
@@ -370,7 +371,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (precision) {
         precision_val -= precision_mod;
     }    
-#endif
+#endif 
 
     switch (keycode) {
         case KC_TGUI:
@@ -434,6 +435,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_MAC_MODE:
             writePinLow(LED_MR_LOCK_PIN);
             set_single_persistent_default_layer(2);
+            return false;
+
+        case KC_TMODE:
+            if (record->event.pressed) {
+                switch (get_highest_layer(layer_state|default_layer_state)) {
+                    case 0:
+                    case 1:
+                        writePinLow(LED_MR_LOCK_PIN);
+                        set_single_persistent_default_layer(2);
+                        break;
+                    case 2:
+                    case 3:
+                    default:
+                        writePinHigh(LED_MR_LOCK_PIN);
+                        set_single_persistent_default_layer(0);
+                }
+            }
             return false;
 
         // case KC_TKEY:                        // 전체키 input off -> 좀 더  손을 봐야 함 위에 나열한 키는 입력이 되며, FN키는 동작되게 해야 할듯함
@@ -665,35 +683,34 @@ void leader_end_user(void){
 // __attribute__ ((weak)) 
 bool rgb_matrix_indicators_user(void)  {
 
+    uint8_t layer = get_highest_layer(layer_state|default_layer_state);
+
     if (isRecordingLedOn) { 
-        rgb_matrix_set_color(37, 0x40, 0x0, 0x40);            
+        rgb_matrix_set_color(38, 0x40, 0x0, 0x40);            
     }
     if (bootloader_mode) { 
         rgb_matrix_set_color(0, 0x40, 0x0, 0x40);            
     }
 
-    switch (kvm_pc_sel) {
+    switch (layer) {
         case 0:
-            switch (kvm_sel_on) {
-                case 0:
-                    rgb_matrix_set_color(108,20,0,20);
-                    break;
-                case 1:
-                    rgb_matrix_set_color(108,0,0,20);    
-                    break;           
-            }
-        break;
-
+            // rgb_matrix_set_color(pgm_read_byte(&convert_led_location2number[11]),  RGB_RED);         //  RGB_TOG  <- too heavy.
+            if (kvm_pc_sel)  rgb_matrix_set_color(103,0,0,40);
+            else            rgb_matrix_set_color(101,0,0,40);
+            break;            
         case 1:
-            switch (kvm_sel_on) {
-                case 0:
-                    rgb_matrix_set_color(106,20,0,20);
-                    break;
-                case 1:
-                    rgb_matrix_set_color(106,0,0,20);    
-                    break;           
-            }
-            break;           
+            if (kvm_pc_sel)  rgb_matrix_set_color(103,0,40,40);
+            else            rgb_matrix_set_color(101,0,40,40);
+            break;
+
+        case 2:
+            if (kvm_pc_sel)  rgb_matrix_set_color(103,40,0,0);
+            else            rgb_matrix_set_color(101,40,0,0);
+            break;        
+        case 3:
+            if (kvm_pc_sel)  rgb_matrix_set_color(103,40,40,0);
+            else            rgb_matrix_set_color(101,40,40,0);
+            break;            
     }
     return TRUE;
 }
