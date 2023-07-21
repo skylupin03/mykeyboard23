@@ -93,6 +93,7 @@
     {"name": "Toggle WinKey Lock", "title": "Toggle WinKey Lock", "shortName": "WinLock"},
     {"name": "WIN Mode", "title": "windows OS Mode", "shortName": "winOS"},
     {"name": "MAC Mode", "title": "macintosh OS Mode", "shortName": "macOS"},
+    {"name": "Toggle Mode", "title": "WIN<-->MAC Mode Toggle", "shortName": "ModeTOG"},    
     {"name": "Mission Control", "title": "Mission Control in macOS", "shortName": "Mission Control"},
     {"name": "Launch Pad", "title": "Launch Pad in macOS", "shortName": "Launch Pad"},
     {"name": "Sport Light", "title": "Sport Light in macOS", "shortName": "Sport Light"},

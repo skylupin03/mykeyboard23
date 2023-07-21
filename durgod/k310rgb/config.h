@@ -47,7 +47,7 @@
 #define BOOTMAGIC_LITE_ROW              0
 #define BOOTMAGIC_LITE_COLUMN           0
 
-#define TAPPING_TERM 175                //////////////////////////////////////////////////
+#define TAPPING_TERM 175                //
 
 /* LED indicator pins */
 // #define LED_COMPOSE_PIN   C9
@@ -106,7 +106,6 @@
 //-------------------------------------------------------------------------------
 /* RGB Underglow or WS2812 RGB Matirx */
 #define RGB_DI_PIN B15    // The pin connected to the data pin of the LEDs
-//#define RGB_DI_PIN C3    // The pin connected to the data pin of the LEDs
 
 #ifdef RGB_DI_PIN
 //pwm driver
@@ -136,7 +135,6 @@
 
 // #define LED_LAYOUT(
 // )
-
 
 //RGB LED Conversion macro from physical array to electric array (+146). This results in better looking animated effects.
 //First section is the LED matrix, second section is the electrical wiring order, and the third section is the desired mapping
@@ -194,94 +192,78 @@
 #    define RGB_DISABLE_AFTER_TIMEOUT 0          // number of ticks to wait until disabling effects
 */
 
-// DRIVER_LED_TOTAL --> RGB_MATRIX_LED_COUNT
-#define RGB_MATRIX_LED_COUNT 113    // 168    //147       // for RGB matrix //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
-    #define RGBLED_NUM 113      // 168      //147          // 이값이위와 틀리니 USB가 끊어짐?
+#define RGB_MATRIX_LED_COUNT 113    // DRIVER_LED_TOTAL 키워드가 변경됨  //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
+    #define RGBLED_NUM 113          // 이값이위와 틀리니 USB가 끊어짐?
 
-#define RGB_MATRIX_DEFAULT_VAL 20           //#define RGB_MATRIX_STARTUP_VAL 50
-#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200
+ #define RGB_MATRIX_DEFAULT_VAL 60          // 이전 값이 20
+#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 255   // 이전 값이 200
 #define RGB_MATRIX_CENTER { 90, 30 }
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
-#define RGB_MATRIX_KEYPRESSES
+#define RGB_MATRIX_KEYPRESSES           // or RGB_MATRIX_KEYRELEASES
 #define RGB_DISABLE_WHEN_USB_SUSPENDED  // turn off effects when suspended
     #define RGBLIGHT_HUE_STEP 8
     #define RGBLIGHT_SAT_STEP 8
     #define RGBLIGHT_VAL_STEP 8
-#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_ALPHAS_MODS
+//#define RGB_MATRIX_STARTUP_MODE ENABLE_RGB_MATRIX_SOLID_COLOR         // Sets the default mode
+#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_SOLID_COLOR      // RGB_MATRIX_ALPHAS_MODS
 
 /*
 // RGB Matrix Animation modes. Explicitly enabled
 // For full list of effects, see:
 // https://docs.qmk.fm/#/feature_rgb_matrix?id=rgb-matrix-effects
-
-#    define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_CYCLE_LEFT_RIGHT // Sets the default mode, if none has been set
-
-#    define ENABLE_RGB_MATRIX_BREATHING           // Single hue brightness cycling animation
-#    define ENABLE_RGB_MATRIX_BAND_SPIRAL_VAL     // Single hue spinning spiral fades brightness
-#    define ENABLE_RGB_MATRIX_CYCLE_ALL           // Full keyboard solid hue cycling through full gradient
-#    define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT    // Full gradient scrolling left to right
-#    define ENABLE_RGB_MATRIX_CYCLE_UP_DOWN       // Full gradient scrolling top to bottom
-#    define ENABLE_RGB_MATRIX_CYCLE_OUT_IN        // Full gradient scrolling out to in
-#    define ENABLE_RGB_MATRIX_CYCLE_PINWHEEL      // Full gradient spinning pinwheel around center of keyboard
-#    define ENABLE_RGB_MATRIX_CYCLE_SPIRAL        // Full gradient spinning spiral around center of keyboard
-#    define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS   // Full dual gradients spinning two halfs of keyboard
-#    define ENABLE_RGB_MATRIX_RAINDROPS           // Randomly changes a single key's hue
-
-// enabled only of RGB_MATRIX_KEYPRESSES or RGB_MATRIX_KEYRELEASES is defined
-#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE   // Pulses keys hit to hue & value then fades value out
-#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE          // Static single hue, pulses keys hit to shifted hue then fades to current hue
-#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE     // Hue & value pulse near a single key hit then fades value out
-#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_CROSS    // Hue & value pulse the same column and row of a single key hit then fades value out
-#    define ENABLE_RGB_MATRIX_SPLASH                  // Full gradient & value pulse away from a single key hit then fades value out
-#    define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH       // Hue & value pulse away from multiple key hits then fades value out
+// 아래 항목 순서대로 안해도 프로그램에서 정의된 순서대로 됨, 번호도 이미 할당되어 있음
 */
-#define ENABLE_RGB_MATRIX_ALPHAS_MODS
+
+#define ENABLE_RGB_MATRIX_SOLID_COLOR                  // 1
+#define ENABLE_RGB_MATRIX_ALPHAS_MODS           
 #define ENABLE_RGB_MATRIX_GRADIENT_UP_DOWN
 #define ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
-#define ENABLE_RGB_MATRIX_BREATHING
-#define ENABLE_RGB_MATRIX_BAND_SAT
-#define ENABLE_RGB_MATRIX_BAND_VAL
+#define ENABLE_RGB_MATRIX_BREATHING                 // 5    // Single hue brightness cycling animation
+#define ENABLE_RGB_MATRIX_BAND_SAT                          // 바탕이 흰색 
+#define ENABLE_RGB_MATRIX_BAND_VAL                          // 바탕이 안켜짐
 #define ENABLE_RGB_MATRIX_BAND_PINWHEEL_SAT
 #define ENABLE_RGB_MATRIX_BAND_PINWHEEL_VAL
-#define ENABLE_RGB_MATRIX_BAND_SPIRAL_SAT
-#define ENABLE_RGB_MATRIX_BAND_SPIRAL_VAL
-#define ENABLE_RGB_MATRIX_CYCLE_ALL
-#define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
-#define ENABLE_RGB_MATRIX_CYCLE_UP_DOWN
-#define ENABLE_RGB_MATRIX_RAINBOW_MOVING_CHEVRON
-#define ENABLE_RGB_MATRIX_CYCLE_OUT_IN
+#define ENABLE_RGB_MATRIX_BAND_SPIRAL_SAT           // 10
+#define ENABLE_RGB_MATRIX_BAND_SPIRAL_VAL                   // Single hue spinning spiral fades brightness
+#define ENABLE_RGB_MATRIX_CYCLE_ALL                         // Full keyboard solid hue cycling through full gradient
+#define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT                  // Full gradient scrolling left to right
+#define ENABLE_RGB_MATRIX_CYCLE_UP_DOWN                     // Full gradient scrolling top to bottom
+#define ENABLE_RGB_MATRIX_RAINBOW_MOVING_CHEVRON    // 15   // 이것포함 아래 2개 모드가 스펙과 순서가 틀림 - 스펙이 틀린듯)
+#define ENABLE_RGB_MATRIX_CYCLE_OUT_IN                      // Full gradient scrolling out to in
 #define ENABLE_RGB_MATRIX_CYCLE_OUT_IN_DUAL
-#define ENABLE_RGB_MATRIX_CYCLE_PINWHEEL
-#define ENABLE_RGB_MATRIX_CYCLE_SPIRAL
-#define ENABLE_RGB_MATRIX_DUAL_BEACON
-#define ENABLE_RGB_MATRIX_RAINBOW_BEACON///////////////////////////////////
-#define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS
-#define ENABLE_RGB_MATRIX_RAINDROPS
+#define ENABLE_RGB_MATRIX_CYCLE_PINWHEEL                    // Full gradient spinning pinwheel around center of keyboard
+#define ENABLE_RGB_MATRIX_CYCLE_SPIRAL                     // Full gradient spinning spiral around center of keyboard
+
+#define ENABLE_RGB_MATRIX_RAINBOW_BEACON            // 20 // 뭐지? 
+#define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS                 // Full dual gradients spinning two halfs of keyboard
+#define ENABLE_RGB_MATRIX_DUAL_BEACON                   // 이것 포함 위 2개, 총 3개 스펙에 순서 틀린듯
+
+#define ENABLE_RGB_MATRIX_RAINDROPS                      // Randomly changes a single key's hue
 #define ENABLE_RGB_MATRIX_JELLYBEAN_RAINDROPS
-#define ENABLE_RGB_MATRIX_HUE_BREATHING
-#define ENABLE_RGB_MATRIX_HUE_PENDULUM
-#define ENABLE_RGB_MATRIX_HUE_WAVE
-#define ENABLE_RGB_MATRIX_FRACTAL
+#define ENABLE_RGB_MATRIX_HUE_BREATHING              // 25 //삭제예정      
+#define ENABLE_RGB_MATRIX_HUE_PENDULUM                      //삭제예정  
+#define ENABLE_RGB_MATRIX_HUE_WAVE                      //삭제예정  
 #define ENABLE_RGB_MATRIX_PIXEL_RAIN
 #define ENABLE_RGB_MATRIX_PIXEL_FLOW
 
-#define ENABLE_RGB_MATRIX_PIXEL_FRACTAL
+#define ENABLE_RGB_MATRIX_PIXEL_FRACTAL             // 30
 
-#define ENABLE_RGB_MATRIX_TYPING_HEATMAP
-#define ENABLE_RGB_MATRIX_DIGITAL_RAIN
+#define ENABLE_RGB_MATRIX_TYPING_HEATMAP        //RGB_MATRIX_FRAMEBUFFER_EFFECTS
+#define ENABLE_RGB_MATRIX_DIGITAL_RAIN          //RGB_MATRIX_FRAMEBUFFER_EFFECTS
 
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_CROSS
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTICROSS
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_NEXUS
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS
-#define ENABLE_RGB_MATRIX_SPLASH
-#define ENABLE_RGB_MATRIX_MULTISPLASH
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE             // Pulses keys hit to hue & value then fades value out
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE                    // Static single hue, pulses keys hit to shifted hue then fades to current hue
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE       // 35   // Hue & value pulse near a single key hit then fades value out
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE        //삭제예정      
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_CROSS              // Hue & value pulse the same column and row of a single key hit then fades value out
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTICROSS       //삭제예정
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_NEXUS          
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS // 40 //삭제예정
+#define ENABLE_RGB_MATRIX_SPLASH                            // Full gradient & value pulse away from a single key hit then fades value out
+#define ENABLE_RGB_MATRIX_MULTISPLASH                     //삭제예정
 #define ENABLE_RGB_MATRIX_SOLID_SPLASH
-#define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
+#define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH         // 44    // Hue & value pulse away from multiple key hits then fades value out
+
 #endif
 //-----------------------------------------------------
 #ifdef LED_MATRIX_ENABLE

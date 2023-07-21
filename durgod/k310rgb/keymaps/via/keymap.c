@@ -22,13 +22,19 @@
     void oled_rgb_mode(void);
 #endif
 
-    uint16_t        startup_timer;
-    static bool     finished_timer  = false;
-    static bool     bootloader_mode = false;
+bool isWinLock = false;             // WIN Lock LED
+bool isWinLockLedOn = false;        //
+static uint16_t WinLock_timer;      //
 
-    static bool     kvm_pc_sel      = false;
-    static uint16_t kvm_timer;
-    static bool     kvm_sel_on      = false;
+uint16_t        startup_timer;
+static bool     finished_timer  = false;
+static bool     bootloader_mode = false;
+
+static bool     kvm_pc_sel      = false;
+static uint16_t kvm_timer;
+static bool     kvm_sel_on      = false;
+
+static bool isMacMode = false;
 
 #define kvm_deadtime    100
 
@@ -51,6 +57,7 @@ user_config_t user_config;
         KC_TGUI = USER00,   // Toggle between GUI Lock or Unlock
         KC_WIN_MODE,        // WINDOWS Keyboard로 변경
         KC_MAC_MODE,        // Machintosh Keyboard로 변경
+        KC_TMODE,        // WINDOWS <--> Machintosh        
         KC_MISSION_CONTROL, // MAC_key
         KC_LAUNCHPAD,       // MAC_key
         KC_SPOTLIGHT,       // MAC_key
@@ -75,6 +82,7 @@ user_config_t user_config;
     KC_TGUI = SAFE_RANGE,   // Toggle between GUI Lock or Unlock
     KC_WIN_MODE,             // WINDOWS Keyboard로 변경
     KC_MAC_MODE,             // Machintosh Keyboard로 변경
+    KC_TMODE,             // WINDOWS <--> Machintosh Toggle    
     KC_MISSION_CONTROL,     // MAC_key
     KC_LAUNCHPAD,           // MAC_key
 KC_SPOTLIGHT,           // MAC_key
@@ -227,7 +235,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      [WIN_FN] = LAYOUT_all(/* Function Layer */
         QK_BOOT,          KC_BRID, KC_BRIU, KC_TASK, KC_FLXP,  KC_DIC, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_WHOM, KC_CALC,   KC_WSCH,   KC_WBAK, KC_WFWD, KC_LOCK2,                           RGB_MOD,
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______,   NK_ON,  NK_OFF,   RGB_TOG,   RGB_SAI, RGB_HUI, RGB_MOD,      KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
-        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, _______, _______, _______, _______, _______, _______,   _______,   RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
+        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, QK_BOOT, _______, _______, _______, _______, _______,   _______,   RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
         CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______,                                   KC_MS_L, KC_BTN3, KC_MS_R,
         _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM,  _______, _______, _______,           _______,            RGB_VAI,               KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D, 
         CL_NORM, KC_TGUI, _______,                             _______,                             KC_PC1, _______, KC_PC2,    KC_TPC,   RGB_SPD, RGB_VAD, RGB_SPI,      KC_BTN1,       KC_BTN2),
@@ -247,7 +255,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [MAC_FN]   = LAYOUT_all(/* Layer 4 */
         QK_BOOT,          KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_F13,  KC_F14,  KC_F15,                            RGB_MOD,
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, NK_ON,   NK_OFF,  RGB_TOG,    RGB_SAI, RGB_HUI, RGB_MOD,     KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2, 
-        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_SAD, RGB_HUD, RGB_RMOD,    KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U, 
+        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, QK_BOOT, _______, _______, _______, _______, _______, _______,    RGB_SAD, RGB_HUD, RGB_RMOD,    KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U, 
         CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                   KC_MS_L, KC_BTN3, KC_MS_R, 
         _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM, _______, _______, _______,          _______,             RGB_VAI,              KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D,  
         CL_NORM, _______, KC_TGUI,                         _______,                                KC_PC1, _______, KC_PC2,   KC_TPC,    RGB_SPD, RGB_VAD, RGB_SPI,     KC_BTN1,       KC_BTN2)
@@ -377,6 +385,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) { // Toggle GUI lock on key press
                 win_key_locked = !win_key_locked;
                 writePin(LED_WIN_LOCK_PIN, !win_key_locked);
+
+                if (win_key_locked){                // LED를 Win키에 표시
+                    isWinLock = true;               //
+                    isWinLockLedOn = true;          //
+                    WinLock_timer  = timer_read();  //
+                }                                   //
+                else {                              //
+                    isWinLock = false;              //
+                    isWinLockLedOn = false;         //
+                }                                   //
             }
             break;
             
@@ -429,11 +447,32 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_WIN_MODE:
             writePinHigh(LED_MR_LOCK_PIN);
             set_single_persistent_default_layer(0);
+            isMacMode = false;
             return false;
 
         case KC_MAC_MODE:
             writePinLow(LED_MR_LOCK_PIN);
             set_single_persistent_default_layer(2);
+            isMacMode = true;            
+            return false;
+
+        case KC_TMODE:
+            if (record->event.pressed) {
+                switch (get_highest_layer(layer_state|default_layer_state)) {
+                    case 0:
+                    case 1:
+                        writePinLow(LED_MR_LOCK_PIN);
+                        set_single_persistent_default_layer(2);
+                        isMacMode = true;                        
+                        break;
+                    case 2:
+                    case 3:
+                    default:
+                        writePinHigh(LED_MR_LOCK_PIN);
+                        set_single_persistent_default_layer(0);
+                        isMacMode = false;                    
+                }
+            }
             return false;
 
         // case KC_TKEY:                        // 전체키 input off -> 좀 더  손을 봐야 함 위에 나열한 키는 입력이 되며, FN키는 동작되게 해야 할듯함
@@ -665,35 +704,39 @@ void leader_end_user(void){
 // __attribute__ ((weak)) 
 bool rgb_matrix_indicators_user(void)  {
 
-    if (isRecordingLedOn) { 
+    uint8_t layer = get_highest_layer(layer_state|default_layer_state);
+
+    if (isWinLock){         // WIN key Lock LED Blink
+        if(timer_elapsed(WinLock_timer) > 1000){
+            isWinLockLedOn = !isWinLockLedOn;
+            WinLock_timer  = timer_read();
+        }
+        if (isWinLockLedOn) {
+            if (isMacMode) rgb_matrix_set_color(110, 0x40, 0, 0);
+            else  rgb_matrix_set_color(111, 0x40, 0, 0);
+        }
+    }
+
+    if (isRecordingLedOn) {                 // Dynamic Macro Recording LED Blink 
         rgb_matrix_set_color(37, 0x40, 0x0, 0x40);            
     }
     if (bootloader_mode) { 
         rgb_matrix_set_color(0, 0x40, 0x0, 0x40);            
     }
 
-    switch (kvm_pc_sel) {
+// rgb_matrix_set_color(pgm_read_byte(&convert_led_location2number[11]),  RGB_RED);         //  RGB_TOG  <- too heavy.
+    switch (layer) {
         case 0:
-            switch (kvm_sel_on) {
-                case 0:
-                    rgb_matrix_set_color(108,20,0,20);
-                    break;
-                case 1:
-                    rgb_matrix_set_color(108,0,0,20);    
-                    break;           
-            }
-        break;
-
         case 1:
-            switch (kvm_sel_on) {
-                case 0:
-                    rgb_matrix_set_color(106,20,0,20);
-                    break;
-                case 1:
-                    rgb_matrix_set_color(106,0,0,20);    
-                    break;           
-            }
-            break;           
+            if (kvm_pc_sel)  rgb_matrix_set_color(106,0,0,40);
+            else            rgb_matrix_set_color(108,0,0,40);
+            break;   
+
+        case 2:
+        case 3:
+            if (kvm_pc_sel)  rgb_matrix_set_color(106,40,0,0);
+            else            rgb_matrix_set_color(108,40,0,0);
+            break;          
     }
     return TRUE;
 }

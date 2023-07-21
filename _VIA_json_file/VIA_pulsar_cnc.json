@@ -42,9 +42,9 @@
                 "Cycle Out/In Dual",
                 "Cycle Pinwheel",
                 "Cycle Spiral",
-                "Dual Beacon",
                 "Rainbow Beacon",
                 "Rainbow Pinwheels",
+                "Dual Beacon",
                 "Raindrops",
                 "Jellybean Raindrops",
                 "Hue Breathing",
@@ -91,8 +91,8 @@
   "matrix": {"rows": 8, "cols": 16},
   "customKeycodes": [
     {"name": "Toggle WinKey Lock", "title": "Toggle WinKey Lock", "shortName": "WinLock"},
-    {"name": "WIN Mode", "title": "windows OS Mode", "shortName": "winOS"},
-    {"name": "MAC Mode", "title": "macintosh OS Mode", "shortName": "macOS"},
+    {"name": "WIN Mode", "title": "Layer 0 or windows OS Mode", "shortName": "winOS"},
+    {"name": "MAC Mode", "title": "Layer 2 or macintosh OS Mode", "shortName": "macOS"},
     {"name": "Toggle Mode", "title": "WIN<-->MAC Mode Toggle", "shortName": "ModeTOG"},    
     {"name": "Mission Control", "title": "Mission Control in macOS", "shortName": "Mission Control"},
     {"name": "Launch Pad", "title": "Launch Pad in macOS", "shortName": "Launch Pad"},
@@ -105,11 +105,11 @@
     {"name": "Left Cmd", "title": "Left Command in macOS", "shortName": "Left Command"},
     {"name": "Right Cmd", "title": "Right Command in macOS", "shortName": "Right Command"}, 
     {"name": "Task View", "title": "Task View in winOS", "shortName": "Task"},
-    {"name": "File Explorer", "title": "File Explorer in  winOS", "shortName": "File"},    
-    {"name": "Toggle AllKey Lock", "title": "Toggle All Key Lock", "shortName": "KeyLock"},
-    {"name": "Main Host", "title": "Connect to Main Host(PC)", "shortName": "PC1"},
-    {"name": "Sub Host", "title": "Connect to Sub Host(PC)", "shortName": "PC2"},      
-    {"name": "Toggle Host", "title": "Host Toggle Switch", "shortName": "PC_T"}
+    {"name": "File Explorer", "title": "File Explorer in winOS", "shortName": "File"},    
+    {"name": "PC1", "title": "Connect to PC1", "shortName": "PC1"},
+    {"name": "PC2", "title": "Connect to PC2", "shortName": "PC2"},      
+    {"name": "Toggle PC", "title": "PC Toggle", "shortName": "PC-TOG"},      
+    {"name": "RST(3s)", "title": "Factory reset when pressed for more than 3 seconds", "shortName": "RST_3S"}
   ],
 
   "layouts": {
@@ -120,7 +120,7 @@
         {"x": 0.75, "y": -0.12, "w":1, "h":1, "c": "#cccccc"},"6,3\n\n\n\n\n\n\n\n\ne0"
       ],
       [
-        {"y": 0.5, "c": "#777777"},"0,0",
+        {"y": 0.3, "c": "#777777"},"0,0",
         {"x": 0.25, "c": "#cccccc"},"0,1","0,2","0,3","0,4", {"x": 0.25, "c": "#aaaaaa"},"0,5","0,6","0,7","0,8",
         {"x": 0.25, "c": "#cccccc"},"0,9","0,10","0,11","0,12", {"x": 0.25, "c": "#777777"},"6,0", 
         {"x": 0.25, "c": "#aaaaaa"},"0,13","0,14","0,15"
