@@ -91,9 +91,9 @@
   "matrix": {"rows": 8, "cols": 16},
   "customKeycodes": [
     {"name": "Toggle WinKey Lock", "title": "Toggle WinKey Lock", "shortName": "WinLock"},
-    {"name": "WIN Mode", "title": "windows OS Mode", "shortName": "winOS"},
-    {"name": "MAC Mode", "title": "macintosh OS Mode", "shortName": "macOS"},
-    {"name": "Toggle Mode", "title": "WIN<-->MAC Mode Toggle", "shortName": "ModeTOG"},    
+    {"name": "WIN Mode", "title": "Layer 0 or windows OS Mode", "shortName": "winOS"},
+    {"name": "MAC Mode", "title": "Layer 2 or macintosh OS Mode", "shortName": "macOS"},
+    {"name": "Toggle Mode", "title": "WIN(Layer 0) <--> MAC(Layer 2) Mode Toggle", "shortName": "ModeTOG"},    
     {"name": "Mission Control", "title": "Mission Control in macOS", "shortName": "Mission Control"},
     {"name": "Launch Pad", "title": "Launch Pad in macOS", "shortName": "Launch Pad"},
     {"name": "Sport Light", "title": "Sport Light in macOS", "shortName": "Sport Light"},
@@ -110,10 +110,11 @@
     {"name": "BL SPD INC", "title": "BackLight Effect Speed Increase", "shortName": "BL SPD I"},
     {"name": "BL SPD DEC", "title": "BackLight Effect Speed Decrease", "shortName": "BL SPD D"},      
     {"name": "Toggle AllKey Lock", "title": "Toggle All Key Lock", "shortName": "KeyLock"},
-    {"name": "Main Host", "title": "Connect to Main Host(PC)", "shortName": "PC1"},
-    {"name": "Sub Host", "title": "Connect to Sub Host(PC)", "shortName": "PC2"},      
-    {"name": "Toggle Host", "title": "Host Toggle Switch", "shortName": "PC_T"}
-  ],
+    {"name": "PC1", "title": "Connect to PC1", "shortName": "PC1"},
+    {"name": "PC2", "title": "Connect to PC2", "shortName": "PC2"},      
+    {"name": "Toggle PC", "title": "PC Toggle", "shortName": "PC-TOG"},      
+    {"name": "RST(3s)", "title": "Factory reset when pressed for more than 3 seconds", "shortName": "RST_3S"}
+    ],
 
   "layouts": {
     "labels": [["Layout", "ANSI", "ISO"]],

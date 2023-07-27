@@ -26,6 +26,8 @@ bool isWinLock = false;             // WIN Lock LED
 bool isWinLockLedOn = false;        //
 static uint16_t WinLock_timer;      //
 
+static uint16_t INIT3S_timer;       // for custom key, INIT_3S
+
 uint16_t        startup_timer;
 static bool     finished_timer  = false;
 static bool     bootloader_mode = false;
@@ -37,7 +39,6 @@ static bool     kvm_sel_on      = false;
 static bool isMacMode = false;
 
 #define kvm_deadtime    100
-
 //------------------------------
 typedef union {
     uint32_t raw;
@@ -77,6 +78,7 @@ user_config_t user_config;
         KC_PC1,             // KM Switch PC1
         KC_PC2,             // KM Switch PC2
         KC_TPC,             // KM Switch PC1<-->PC2 Toggle
+        INIT_3S,            // EE_CLR(EEPROM CLear)(공장초기화)를 3초이상 눌러야 동작
         NEW_SAFE_RANGE = SAFE_RANGE
 #else
     KC_TGUI = SAFE_RANGE,   // Toggle between GUI Lock or Unlock
@@ -101,7 +103,8 @@ KC_LOCK_SCREEN,         // MAC_key
     KC_TKEY,                // all key input off
     KC_PC1,                 // KM Switch PC1
     KC_PC2,                 // KM Switch PC2
-    KC_TPC,                 // KM Switch PC1<-->PC2 Toggle    
+    KC_TPC,                 // KM Switch PC1<-->PC2 Toggle
+    INIT_3S,            // EE_CLR(EEPROM CLear)(공장초기화)를 3초이상 눌러야 동작    
     NEW_SAFE_RANGE
 #endif
     };
@@ -180,6 +183,12 @@ void keyboard_post_init_user(void) {
     kvm_switch(kvm_pc_sel);
 }
 
+// void eeconfig_init_user(void) {  // EEPROM is getting reset!
+//   user_config.raw = 0;
+//   // user_config.rgb_layer_change = true; // We want this enabled by default
+//   eeconfig_update_user(user_config.raw); // Write default value to EEPROM now
+// }
+
 //-------------------------------------------------------------------------------------------------------
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Keymap _BASE: Base Layer (Default Layer)
@@ -197,20 +206,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       * ├────┼───┴┬──┴─┬─┴───┴───┴───┴───┴───┴──┬┴───┼───┴┬────┬────┤ ┌───┼───┼───┐ ├───┴───┼───┤Ent│
       * │Ctrl│GUI │Alt │                        │ Alt│Func│ App│Ctrl│ │ ← │ ↓ │ → │ │   0   │ . │   │
       * └────┴────┴────┴────────────────────────┴────┴────┴────┴────┘ └───┴───┴───┘ └───────┴───┴───┘
-        KC_ESC,           KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_PSCR, KC_SCRL, KC_PAUS,
+        KC_ESC,           KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_PSCR, KC_SCRL, KC_PAUS,   KC_MUTE  or RGB_MOD  or  LT(1,KC_WWW_BACK),
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,    KC_INS,  KC_HOME, KC_PGUP,  TD(TD_NLCK_CALC),KC_PSLS,KC_PAST,KC_PMNS,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,    KC_DEL,  KC_END,  KC_PGDN,    KC_P7,   KC_P8,   KC_P9,   KC_PPLS,
         RALT_T(KC_CAPS), KC_A, KC_S, KC_D,   KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT,                                  KC_P4,   KC_P5,   KC_P6,
         OSM(MOD_LSFT), KC_NUBS, KC_Z, KC_X, KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT,             KC_UP,               KC_P1,   KC_P2,   KC_P3,   KC_PENT,
-        OSM(MOD_LCTL), OSM(MOD_LGUI), OSM(MOD_LALT),          KC_SPC,                             KC_RALT,MO(WIN_FN),KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
+        OSM(MOD_LCTL), OSM(MOD_LGUI), OSM(MOD_LALT),        KC_SPC,        KC_RALT,  MO(WIN_FN) or LT(WIN_FN,KC_TPC), MO(WIN_FN),KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0,            KC_PDOT
       */
      [WIN_BASE] = LAYOUT_all(/* Base Layer */
-        KC_ESC,   KC_F1, KC_F2, KC_F3, KC_F4,    KC_F5, KC_F6, KC_F7, KC_F8,   KC_F9, KC_F10, KC_F11, KC_F12,    KC_PSCR, KC_SCRL, KC_PAUS,                         KC_MUTE,
+        KC_ESC,   KC_F1, KC_F2, KC_F3, KC_F4,    KC_F5, KC_F6, KC_F7, KC_F8,   KC_F9, KC_F10, KC_F11, KC_F12,    KC_PSCR, KC_SCRL, KC_PAUS,                        KC_MUTE,
         KC_GRV,  KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL,       KC_BSPC,     KC_INS, KC_HOME, KC_PGUP,     TD(TD_NLCK_CALC), KC_PSLS, KC_PAST, KC_PMNS, 
         KC_TAB,     KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC,    KC_BSLS,     KC_DEL, KC_END, KC_PGDN,     KC_P7, KC_P8, KC_P9, KC_PPLS, 
         KC_CAPS,  KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_NUHS,    KC_ENT,                                  KC_P4, KC_P5, KC_P6, 
         KC_LSFT,     KC_NUBS, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,    KC_RSFT,              KC_UP,              KC_P1, KC_P2, KC_P3, KC_PENT, 
-        KC_LCTL, KC_LGUI, KC_LALT,                 KC_SPC,              KC_RALT, MO(WIN_FN), KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0, KC_PDOT),
+        KC_LCTL, KC_LGUI, KC_LALT,                  KC_SPC,             KC_RALT, MO(WIN_FN), KC_APP, KC_RCTL,    KC_LEFT, KC_DOWN, KC_RGHT,    KC_P0, KC_PDOT),
     /* Keymap _FN: Function Layer
       * ┌───┐   ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┬───┐ ┌───┬───┬───┐
       * │Firm   │Ply│Stp│Prv│Nxt│ │Mut│Vo+│Vo-│   │ │   │   │   │   │ │   │   │   │
@@ -235,7 +244,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      [WIN_FN] = LAYOUT_all(/* Function Layer */
         QK_BOOT,          KC_BRID, KC_BRIU, KC_TASK, KC_FLXP,  KC_DIC, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_WHOM, KC_CALC,   KC_WSCH,   KC_WBAK, KC_WFWD, KC_LOCK2,                           RGB_MOD,
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______,   NK_ON,  NK_OFF,   RGB_TOG,   RGB_SAI, RGB_HUI, RGB_MOD,      KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
-        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, QK_BOOT, _______, _______, _______, _______, _______,   _______,   RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
+        _______, _______, KC_WINM, _______, INIT_3S, _______, _______, QK_BOOT, _______, _______, _______, _______, _______,   _______,   RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
         CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______,                                   KC_MS_L, KC_BTN3, KC_MS_R,
         _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM,  _______, _______, _______,           _______,            RGB_VAI,               KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D, 
         CL_NORM, KC_TGUI, _______,                             _______,                             KC_PC1, _______, KC_PC2,    KC_TPC,   RGB_SPD, RGB_VAD, RGB_SPI,      KC_BTN1,       KC_BTN2),
@@ -255,7 +264,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [MAC_FN]   = LAYOUT_all(/* Layer 4 */
         QK_BOOT,          KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,     KC_F13,  KC_F14,  KC_F15,                            RGB_MOD,
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, NK_ON,   NK_OFF,  RGB_TOG,    RGB_SAI, RGB_HUI, RGB_MOD,     KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2, 
-        _______, _______, KC_WINM, _______,  QK_RBT, _______, _______, QK_BOOT, _______, _______, _______, _______, _______, _______,    RGB_SAD, RGB_HUD, RGB_RMOD,    KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U, 
+        _______, _______, KC_WINM, _______, INIT_3S, _______, _______, QK_BOOT, _______, _______, _______, _______, _______, _______,    RGB_SAD, RGB_HUD, RGB_RMOD,    KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U, 
         CL_SWAP, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                   KC_MS_L, KC_BTN3, KC_MS_R, 
         _______, _______, _______, _______,  EE_CLR, _______, _______, _______, KC_MACM, _______, _______, _______,          _______,             RGB_VAI,              KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D,  
         CL_NORM, _______, KC_TGUI,                         _______,                                KC_PC1, _______, KC_PC2,   KC_TPC,    RGB_SPD, RGB_VAD, RGB_SPI,     KC_BTN1,       KC_BTN2)
@@ -278,13 +287,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #ifdef ENCODER_MAP_ENABLE
 
 // #define NUM_ENCODERS 2
+
+    // [WIN_BASE] = { ENCODER_CCW_CW(KC_WH_D, KC_WH_U) },
+    // [WIN_FN]   = { ENCODER_CCW_CW(LCTL(KC_PMNS), LCTL(KC_PPLS)) },
+
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [WIN_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
     [WIN_FN]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI) },
     [MAC_BASE] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
     [MAC_FN]   = { ENCODER_CCW_CW(RGB_VAD, RGB_VAI) }
 };
-//#endif
+//#endifssss
 
 // bool encoder_update_user(uint8_t index, bool clockwise) {
 
@@ -381,6 +394,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif
 
     switch (keycode) {
+        case INIT_3S:
+            if (record->event.pressed){
+                INIT3S_timer = timer_read();
+//                return false;
+            }
+            else{
+                if(timer_elapsed(INIT3S_timer) > 3000){
+                    eeconfig_init();
+//                  eeconfig_init_user();
+                    soft_reset_keyboard();
+                }
+//                return false;                
+            }
+            break;
+
         case KC_TGUI:
             if (record->event.pressed) { // Toggle GUI lock on key press
                 win_key_locked = !win_key_locked;
