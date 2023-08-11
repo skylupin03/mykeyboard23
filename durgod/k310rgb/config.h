@@ -204,8 +204,8 @@
     #define RGBLIGHT_HUE_STEP 8
     #define RGBLIGHT_SAT_STEP 8
     #define RGBLIGHT_VAL_STEP 8
-//#define RGB_MATRIX_STARTUP_MODE ENABLE_RGB_MATRIX_SOLID_COLOR         // Sets the default mode
-#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_SOLID_COLOR      // RGB_MATRIX_ALPHAS_MODS
+//#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_SOLID_COLOR          // Sets the default mode (옛날코드 지금은 동작 안함)
+//#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_SOLID_COLOR      // RGB_MATRIX_ALPHAS_MODS
 
 /*
 // RGB Matrix Animation modes. Explicitly enabled

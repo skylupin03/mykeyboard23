@@ -203,13 +203,14 @@
     #define RGBLIGHT_HUE_STEP 8
     #define RGBLIGHT_SAT_STEP 8
     #define RGBLIGHT_VAL_STEP 8
-#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_SOLID_COLOR          // Sets the default mode
+//#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_SOLID_COLOR          // Sets the default mode (옛날코드 지금은 동작 안함)
 //#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_GRADIENT_LEFT_RIGHT      // RGB_MATRIX_ALPHAS_MODS
 
 /*
 // RGB Matrix Animation modes. Explicitly enabled
 // For full list of effects, see:
 // https://docs.qmk.fm/#/feature_rgb_matrix?id=rgb-matrix-effects
+// 아래 항목 순서대로 안해도 프로그램에서 정의된 순서대로 됨, 번호도 이미 할당되어 있음
 */
 
 #define ENABLE_RGB_MATRIX_SOLID_COLOR                  // 1
