@@ -68,3 +68,4 @@ ENCODER_MAP_ENABLE = yes
 #JOYSTICK_DRIVER = analog
 #SRC += analog.c
 
+SIGNALRGB_SUPPORT_ENABLE = yes

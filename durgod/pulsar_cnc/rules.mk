@@ -21,7 +21,7 @@ BOOTLOADER = stm32-dfu
 BOOTMAGIC_ENABLE = yes      # Enable Bootmagic Lite
 MOUSEKEY_ENABLE = yes       # Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes       # Audio control and System control(+450)
-CONSOLE_ENABLE = no         # Console for debug(+400)
+CONSOLE_ENABLE = yes         # Console for debug(+400)
 COMMAND_ENABLE = no         # Commands for debug and configuration
 NKRO_ENABLE = yes           # Enable N-Key Rollover
 BACKLIGHT_ENABLE = no       	# Enable keyboard backlight functionality
@@ -68,3 +68,4 @@ ENCODER_MAP_ENABLE = yes
 #JOYSTICK_DRIVER = analog
 #SRC += analog.c
 
+DEBUG_MATRIX_SCAN_RATE_ENABLE = yes

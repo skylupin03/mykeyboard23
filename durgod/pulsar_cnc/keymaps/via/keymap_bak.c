@@ -26,9 +26,7 @@ bool isWinLock = false;             // WIN Lock LED
 bool isWinLockLedOn = false;        //
 static uint16_t WinLock_timer;      //
 
-static bool     INIT3S_on = false;
-static bool     INIT3S_led_on = false;
-static uint16_t INIT3S_timer; // for custom key, INIT_3S
+static uint16_t INIT3S_timer;       // for custom key, INIT_3S
 
 uint16_t        startup_timer;
 static bool     finished_timer  = false;
@@ -392,12 +390,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case INIT_3S:
             if (record->event.pressed){
                 INIT3S_timer = timer_read();
-                INIT3S_on    = true;
-                // return false;
+//                return false;
             }
             else{
-                INIT3S_on   = false;
-                // return false;              
+                if(timer_elapsed(INIT3S_timer) > 3000){
+                    eeconfig_init();
+//                  eeconfig_init_user();
+                    soft_reset_keyboard();
+                }
+//                return false;                
             }
             break;
 
@@ -622,29 +623,6 @@ void matrix_scan_user(void) {
         }
     }
 
-    if (INIT3S_on == true){
-        if (timer_elapsed(INIT3S_timer) > 3000){
-            INIT3S_on = false;
-            INIT3S_led_on = true;
-            
-            INIT3S_timer = timer_read();
-            // eeconfig_init();
-            // //  eeconfig_init_user();
-            // soft_reset_keyboard();
-        }
-    }
-    if (INIT3S_led_on == true){
-        if(timer_elapsed(INIT3S_timer) > 2000){
-
-            // INIT3S_on = false;
-            // INIT3S_led_on = true;
-            eeconfig_init();
-            //  eeconfig_init_user();
-            soft_reset_keyboard();
-        }
-    }
-
-
 #ifdef LEADER_ENABLE
     LEADER_DICTIONARY() {
         leading = false;
@@ -748,14 +726,6 @@ void leader_end_user(void){
 bool rgb_matrix_indicators_user(void)  {
 
     uint8_t layer = get_highest_layer(layer_state|default_layer_state);
-
-    if (INIT3S_led_on == true){
-        rgb_matrix_set_color_all(0xff, 0, 0);
-            // eeconfig_init();
-            // //  eeconfig_init_user();
-            // soft_reset_keyboard();        
-    }
-
 
     if (isWinLock){         // WIN key Lock LED Blink
         if(timer_elapsed(WinLock_timer) > 1000){
