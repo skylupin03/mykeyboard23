@@ -40,7 +40,12 @@ terrazzo ; terrazzo를 K20에 이식하여 동작을 검토함
 15. pulsar_cnc ; 13번에서 파생, Pulsar cnc tenkeyless 제품 
                 (KM switch B/D, 21개 더미LED, 3개키 추가, 디지탈 엔코더, no OLED)
 
- 
+ QMK ver0.21.6 적용 ==> projectName_v0216
+ QMK ver0.22.2 적용 ==> projectName_v0222
+
+16. pulsar/xboard ; durgod/pulsar_cnc_v0216을 복사
+                    v0.22.2 적용 / PID를 "Pulsar Xboard"로 변경, VIA json파일도 같이 변경
+                     
 
 
 ----------------------------------------------------------------------------------------------
