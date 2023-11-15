@@ -532,6 +532,15 @@ bool oled_task_user(void) {
 
 #ifdef OS_DETECTION_ENABLE
     render_logo_font();  
+        oled_set_cursor(0, 2);
+            char string[4];
+        uint16_t m = timer_read();
+        string[3] = '\0';
+        string[2] = '0' + m % 10;
+        string[1] = ( m /= 10) % 10 ? '0' + (m) % 10 : (m / 10) % 10 ? '0' : ' ';
+        string[0] =  m / 10 ? '0' + m / 10 : ' ';
+        oled_write(string, false);
+
     oled_set_cursor(0, 3);
     oled_write_P(PSTR(" OS Detected; "), false);
     switch (detected_host_os()) {

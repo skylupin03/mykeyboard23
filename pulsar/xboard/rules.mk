@@ -31,7 +31,7 @@ WS2812_DRIVER = spi				# bitbang, spi(circular buffer issue), pwm(too much acces
 AUDIO_ENABLE = no           # Audio output
 LTO_ENABLE = yes
 
-LAYOUTS = fullsize_ansi fullsize_iso
+#LAYOUTS = fullsize_ansi fullsize_iso
 
 DYNAMIC_MACRO_ENABLE = yes
 WPM_ENABLE = yes
