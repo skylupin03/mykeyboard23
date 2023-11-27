@@ -62,7 +62,7 @@
 #define ENCODERS_PAD_A { C13 }
 #define ENCODERS_PAD_B { C14 } 
 /* Specifies the number of pulses the encoder registers between each detent */
-#define ENCODER_RESOLUTION 2       // 4  //#define ENCODER_RESOLUTIONS { 2, 2 }
+#define ENCODER_RESOLUTION 4       // 2  //#define ENCODER_RESOLUTIONS { 2, 2 }
 //#define ENCODER_DIRECTION_FLIP
 //#define ENCODER_DEFAULT_POS 0x3
 
@@ -187,7 +187,7 @@
     #define RGBLED_NUM 111
 
  #define RGB_MATRIX_DEFAULT_VAL 60 
-#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 255
+#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 220       // @default RGB mode, Max brightness => 200-> 440mA / 220-> 500mA / 255 -> 620mA
 #define RGB_MATRIX_CENTER   {94,21}
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
 #define RGB_MATRIX_KEYPRESSES
