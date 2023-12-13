@@ -28,9 +28,9 @@ export function ControllableParameters()
 const vKeys =
 [
         	0,     1,  2,  3,
-        11, 10,  9,  8,  7,  6,  5, 4,
+         4,  5,  6, 7,  8,  9,  10, 11,
         12, 13, 14, 15, 16, 17, 18,
-        23, 22, 21, 20, 19,
+        19, 20, 21, 22, 23,
         24, 25, 26, 27
 ];
 const vKeyNames =

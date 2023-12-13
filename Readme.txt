@@ -45,6 +45,12 @@ terrazzo ; terrazzo를 K20에 이식하여 동작을 검토함
 
 16. pulsar/xboard ; durgod/pulsar_cnc_v0216을 복사
                     v0.22.2 적용 / PID를 "Pulsar Xboard"로 변경, VIA json파일도 같이 변경
+
+17. 모두 v0.23.0적용예정(KM스위치 허브장착모델은 chibios.c파일을 수정해야 함)
+     reMAP은 VIA용 json파일을 적용하여 바로 사용가능
+     signal RGB는 코드를 그대로 make하여 별로 펌웨어로 만듬 (이 펌웨어는 VIA, reMAP, Signal RGB 모두 사용가능, 동시는 아님)
+
+       vial은 검토 중
                      
 
 

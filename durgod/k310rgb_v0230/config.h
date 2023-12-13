@@ -17,21 +17,26 @@
 
 #pragma once
 
+// #include "config_common.h" // 이것이 없으면  매트릭스 핀설정을 json파일에서 해줘야  // Ver 0.21.6에서 삭제
+
 #define WAIT_US_TIMER           GPTD3
+//#define STM32_GPT_USE_TIM3 TRUE		// Board 디렉토리 파일에 디파인 있음
 
 /* key matrix size (rows in specific keyboard variant) */
 #define MATRIX_COLS 16
 #define MATRIX_ROWS 8
 
- #define MATRIX_ROW_PINS {A0, A1, A2, A3, A4, A5, A6, A7 } 
-#define MATRIX_COL_PINS {C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, A15, C6, C7, C10, C11, C12 }
+ #define MATRIX_ROW_PINS {A0, A1, A2, A3, A4, A5, A6, A7 }    // 메타블 ARTWORK(DURGOD original) 230516
+
+//#define MATRIX_COL_PINS {C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, B15, C6, C7, C10, C11, C12 }   // 메타블 ARTWORK(DURGOD original) 230516
+#define MATRIX_COL_PINS {C4, C5, B0, B1, B2, B10, B11, B12, B13, B14, A15, C6, C7, C10, C11, C12 }    /* 스트링LED 제어를 SPI2- B15로 하여 매트릭스를 변경함*/
 
 /* COL2ROW, ROW2COL*/    
 #define DIODE_DIRECTION ROW2COL
 
 // Dynamic EEPROM
 // Something sensible or else VIA may crash, Users may enable more if they wish
-#define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  4095      // 16383
+#define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR  4095      // 4095     // 16383
 //#define DYNAMIC_KEYMAP_LAYER_COUNT 4
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
@@ -39,10 +44,15 @@
 
 /* Bootmagic Lite key configuration */
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP TRUE
-#define BOOTMAGIC_LITE_ROW              2
-#define BOOTMAGIC_LITE_COLUMN           7
+#define BOOTMAGIC_LITE_ROW              0
+#define BOOTMAGIC_LITE_COLUMN           0
 
-/* LED indicator pins */  
+#define TAPPING_TERM 175                //
+
+/* LED indicator pins */
+// #define LED_COMPOSE_PIN   C9
+// #define LED_KANA_PIN A8
+
 #define LED_CAPS_LOCK_PIN   C9
 #define LED_SCROLL_LOCK_PIN A8
 #define LED_NUM_LOCK_PIN    C8
@@ -59,11 +69,11 @@
 #define GPIO_KM_SEL         C0      // Hub Host Selection
 
 /* Encoder used pins */
-#define ENCODERS_PAD_A { C13 }
-#define ENCODERS_PAD_B { C14 } 
+#define ENCODERS_PAD_A { C13 }  //
+#define ENCODERS_PAD_B { C14 }   // { C14 } { C3 } 
 /* Specifies the number of pulses the encoder registers between each detent */
-#define ENCODER_RESOLUTION 4       // 2  //#define ENCODER_RESOLUTIONS { 2, 2 }
-//#define ENCODER_DIRECTION_FLIP
+#define ENCODER_RESOLUTION 4        //2       //#define ENCODER_RESOLUTIONS { 2, 2 }  //4
+#define ENCODER_DIRECTION_FLIP
 //#define ENCODER_DEFAULT_POS 0x3
 
 /* DIP switch */
@@ -74,32 +84,33 @@
 
 // #define FORCE_NKRO
 
-#define TAPPING_TERM            175            //
+#define TAPPING_TERM 175 //////////////////////////////////////////////////
 #define TAPPING_TERM_PER_KEY
-#define AUTO_SHIFT_TIMEOUT      170
+#define AUTO_SHIFT_TIMEOUT  170
 #define AUTO_SHIFT_REEPAT
 #define NO_AUTO_SHIFT_SPECIAL
 
 #define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
 
-#define ONESHOT_TAP_TOGGLE  2  /* Tapping this number of times holds the key until tapped once again. */
-#define ONESHOT_TIMEOUT     5000  /* Time (in ms) before the one shot key is released */
+#define ONESHOT_TAP_TOGGLE 2  /* Tapping this number of times holds the key until tapped once again. */
+#define ONESHOT_TIMEOUT 5000  /* Time (in ms) before the one shot key is released */
 
-#define LEADER_TIMEOUT      500
+#define LEADER_TIMEOUT 500
 #define LEADER_PER_KEY_TIMING
 //#define LEADER_NO_TIMEOUT
 
-#define JOYSTICK_BUTTON_COUNT       16      // Min 0, max 32
-#define JOYSTICK_AXIS_COUNT         2       // Min 0, max 6: X, Y, Z, Rx, Ry, Rz
-#define JOYSTICK_AXIS_RESOLUTION    12      // Min 8, max 16
+#define JOYSTICK_BUTTON_COUNT 16        // Min 0, max 32
+#define JOYSTICK_AXIS_COUNT 2           // Min 0, max 6: X, Y, Z, Rx, Ry, Rz
+#define JOYSTICK_AXIS_RESOLUTION 12     // Min 8, max 16
 
 //-------------------------------------------------------------------------------
 /* RGB Underglow or WS2812 RGB Matirx */
-#define WS2812_DI_PIN   B15
+//#define RGB_DI_PIN B15    // The pin connected to the data pin of the LEDs
+#define WS2812_DI_PIN B15   // Ver 0.21.6에서 변경
+//#ifdef RGB_DI_PIN
+#ifdef WS2812_DI_PIN   // Ver 0.21.6에서 변경
 
-
-#ifdef WS2812_DI_PIN
-// < pwm driver >
+//pwm driver
     // #define WS2812_PWM_DRIVER PWMD1
     // #define WS2812_PWM_CHANNEL 3
     // #define WS2812_PWM_PAL_MODE 1                   // 2 <- 072?
@@ -108,14 +119,14 @@
     // #define WS2812_DMA_CHANNEL 6                    // 2
     // //#define WS2812_DMAMUX_ID STM32_DMAMUX1_TIM2_UP // DMAMUX configuration for TIMx_UP -- only required if your MCU has a DMAMUX peripheral, see the respective reference manual for the appropriate values for your MCU.
     // //#define WS2812_PWM_TARGET_PERIOD 800000
-// <spi driver >
+//spi driver
 //    #define WS2812_SPI                  SPID2
-    #define WS2812_SPI_DRIVER           SPID2    
+    #define WS2812_SPI_DRIVER             SPID2
     #define WS2812_SPI_MOSI_PAL_MODE    0      // 0 for F072-B15, 5 for F4x1(F103?) // MOSI pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 5   
 //    #define WS2812_SPI_MOSI_PAL_MODE    1      // 1 for F072-C3, 5 for F4x1(F103?) // MOSI pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 5   
-    #define WS2812_SPI_SCK_PIN          B13     //
-    #define WS2812_SPI_SCK_PAL_MODE     5       // F072, enable = 0 / F401 enable = 5  (disable은 반대인가?)  (enable되어도 매트릭스 할당되면 매트릭스로 동작함)
-    #define WS2812_SPI_DIVISOR          16      //4 4와 8만 되나?       //16    
+     #define WS2812_SPI_SCK_PIN       B13     //
+     #define WS2812_SPI_SCK_PAL_MODE  5       // F072, enable = 0 / F401 enable = 5  (disable은 반대인가?)  (enable되어도 매트릭스 할당되면 매트릭스로 동작함)
+    #define WS2812_SPI_DIVISOR	        16      //4 4와 8만 되나?       //16    
     
     /* F4x1 */
     // #define WS2812_SPI_MOSI_PAL_MODE    5      // MOSI pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 5   // 0 for F072
@@ -127,7 +138,6 @@
 
 // #define LED_LAYOUT(
 // )
-
 
 //RGB LED Conversion macro from physical array to electric array (+146). This results in better looking animated effects.
 //First section is the LED matrix, second section is the electrical wiring order, and the third section is the desired mapping
@@ -174,6 +184,7 @@
 #    define DRIVER_2_LED_TOTAL 32
 #    define DRIVER_3_LED_TOTAL 32
 #    define DRIVER_4_LED_TOTAL 32
+//#    define DRIVER_LED_TOTAL (DRIVER_1_LED_TOTAL + DRIVER_2_LED_TOTAL + DRIVER_3_LED_TOTAL + DRIVER_4_LED_TOTAL )
 #    define RGB_MATRIX_LED_COUNT (DRIVER_1_LED_TOTAL + DRIVER_2_LED_TOTAL + DRIVER_3_LED_TOTAL + DRIVER_4_LED_TOTAL )
 
     //#define ISSI_TIMEOUT    100     // option
@@ -184,27 +195,29 @@
 #    define RGB_DISABLE_AFTER_TIMEOUT 0          // number of ticks to wait until disabling effects
 */
 
-#define RGB_MATRIX_LED_COUNT 111
-    #define RGBLED_NUM 111
+#define RGB_MATRIX_LED_COUNT 113    // DRIVER_LED_TOTAL 키워드가 변경됨  //PWM으로 하면 갯수 255이상에서 에러발생 / SPI는 혹시 255에상에서 다운?
+    #define RGBLED_NUM 113          // 이값이위와 틀리니 USB가 끊어짐?
 
- #define RGB_MATRIX_DEFAULT_VAL 60 
-#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 220       // @default RGB mode, Max brightness => 200-> 440mA / 220-> 500mA / 255 -> 620mA
-#define RGB_MATRIX_CENTER   {94,21}
+ #define RGB_MATRIX_DEFAULT_VAL 60          // 이전 값이 20
+#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 255   // 이전 값이 200
+#define RGB_MATRIX_CENTER { 90, 30 }
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
-#define RGB_MATRIX_KEYPRESSES
+#define RGB_MATRIX_KEYPRESSES           // or RGB_MATRIX_KEYRELEASES
 #define RGB_DISABLE_WHEN_USB_SUSPENDED  // turn off effects when suspended
     #define RGBLIGHT_HUE_STEP 8
     #define RGBLIGHT_SAT_STEP 8
     #define RGBLIGHT_VAL_STEP 8
-//#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_GRADIENT_LEFT_RIGHT      // RGB_MATRIX_ALPHAS_MODS
+//#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_SOLID_COLOR          // Sets the default mode (옛날코드 지금은 동작 안함)
+//#define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_SOLID_COLOR      // RGB_MATRIX_ALPHAS_MODS
 
 /*
 // RGB Matrix Animation modes. Explicitly enabled
 // For full list of effects, see:
 // https://docs.qmk.fm/#/feature_rgb_matrix?id=rgb-matrix-effects
+// 아래 항목 순서대로 안해도 프로그램에서 정의된 순서대로 됨, 번호도 이미 할당되어 있음
 */
 
-#define ENABLE_RGB_MATRIX_SOLID_COLOR               // 1
+#define ENABLE_RGB_MATRIX_SOLID_COLOR                  // 1
 #define ENABLE_RGB_MATRIX_ALPHAS_MODS           
 #define ENABLE_RGB_MATRIX_GRADIENT_UP_DOWN
 #define ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
@@ -222,17 +235,17 @@
 #define ENABLE_RGB_MATRIX_CYCLE_OUT_IN                      // Full gradient scrolling out to in
 #define ENABLE_RGB_MATRIX_CYCLE_OUT_IN_DUAL
 #define ENABLE_RGB_MATRIX_CYCLE_PINWHEEL                    // Full gradient spinning pinwheel around center of keyboard
-#define ENABLE_RGB_MATRIX_CYCLE_SPIRAL                      // Full gradient spinning spiral around center of keyboard
+#define ENABLE_RGB_MATRIX_CYCLE_SPIRAL                     // Full gradient spinning spiral around center of keyboard
 
-#define ENABLE_RGB_MATRIX_RAINBOW_BEACON            // 20   // ? 
+#define ENABLE_RGB_MATRIX_RAINBOW_BEACON            // 20 // 뭐지? 
 #define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS                 // Full dual gradients spinning two halfs of keyboard
-#define ENABLE_RGB_MATRIX_DUAL_BEACON                   
+#define ENABLE_RGB_MATRIX_DUAL_BEACON                   // 이것 포함 위 2개, 총 3개 스펙에 순서 틀린듯
 
 #define ENABLE_RGB_MATRIX_RAINDROPS                      // Randomly changes a single key's hue
 #define ENABLE_RGB_MATRIX_JELLYBEAN_RAINDROPS
-#define ENABLE_RGB_MATRIX_HUE_BREATHING              // 25 
-#define ENABLE_RGB_MATRIX_HUE_PENDULUM              
-#define ENABLE_RGB_MATRIX_HUE_WAVE 
+#define ENABLE_RGB_MATRIX_HUE_BREATHING              // 25 //삭제예정      
+#define ENABLE_RGB_MATRIX_HUE_PENDULUM                      //삭제예정  
+#define ENABLE_RGB_MATRIX_HUE_WAVE                      //삭제예정  
 #define ENABLE_RGB_MATRIX_PIXEL_RAIN
 #define ENABLE_RGB_MATRIX_PIXEL_FLOW
 
@@ -244,18 +257,85 @@
 #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE             // Pulses keys hit to hue & value then fades value out
 #define ENABLE_RGB_MATRIX_SOLID_REACTIVE                    // Static single hue, pulses keys hit to shifted hue then fades to current hue
 #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE       // 35   // Hue & value pulse near a single key hit then fades value out
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE  
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE        //삭제예정      
 #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_CROSS              // Hue & value pulse the same column and row of a single key hit then fades value out
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTICROSS 
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTICROSS       //삭제예정
 #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_NEXUS          
-#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS // 40   //
+#define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS // 40 //삭제예정
 #define ENABLE_RGB_MATRIX_SPLASH                            // Full gradient & value pulse away from a single key hit then fades value out
-#define ENABLE_RGB_MATRIX_MULTISPLASH                       //
+#define ENABLE_RGB_MATRIX_MULTISPLASH                     //삭제예정
 #define ENABLE_RGB_MATRIX_SOLID_SPLASH
 #define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH         // 44    // Hue & value pulse away from multiple key hits then fades value out
-#endif
 
+#endif
 //-----------------------------------------------------
+#ifdef LED_MATRIX_ENABLE
+    #define BACKLIGHT_LEVELS 5
+    /* LED Matrix Driver Configuration */
+    #define LED_DRIVER_COUNT 1
+    #define LED_DRIVER_ADDR_1 0b1110111 // 0b1110100  //0b1110111
+    //#define DRIVER_ADDR_2 0b1110110   //0b1110100
+
+    //#define ISSI_TIMEOUT    100     // option
+    #define ISSI_PERSISTENCE 3 // option
+
+    #define LED_DRIVER_1_LED_TOTAL 144 // 105       // 104
+    //#define DRIVER_2_LED_TOTAL 37
+// #define DRIVER_LED_TOTAL LED_DRIVER_1_LED_TOTAL       //  + DRIVER_2_LED_TOTAL)
+#define LED_MATRIX_LED_COUNT LED_DRIVER_1_LED_TOTAL //  + DRIVER_2_LED_TOTAL)
+
+    //#define LED_MATRIX_ROWS 15
+    //#define LED_MATRIX_COLS 7
+
+    /* Enable caps-lock LED */
+    //#define CAPS_LOCK_LED_INDEX 0
+    //#define SCROLL_LOCK_LED_INDEX 1     //14
+    //#define NUM_LOCK_LED_INDEX 2        //104
+
+    #define LED_MATRIX_KEYPRESSES // reacts to keypresses
+    //#define LED_MATRIX_KEYRELEASES // reacts to keyreleases (instead of keypresses)
+    //#define LED_MATRIX_FRAMEBUFFER_EFFECTS // enable framebuffer effects
+    //#define LED_DISABLE_TIMEOUT 0 // number of milliseconds to wait until led automatically turns off
+    //#define LED_DISABLE_AFTER_TIMEOUT 0 // OBSOLETE: number of ticks to wait until disabling effects
+    #define LED_DISABLE_WHEN_USB_SUSPENDED // turn off effects when suspended
+    //#define LED_MATRIX_LED_PROCESS_LIMIT (DRIVER_LED_TOTAL + 4) / 5 // limits the number of LEDs to process in an animation per task run (increases keyboard responsiveness)
+    //#define LED_MATRIX_LED_FLUSH_LIMIT 16 // limits in milliseconds how frequently an animation will update the LEDs. 16 (16ms) is equivalent to limiting to 60fps (increases keyboard responsiveness)
+    #define LED_MATRIX_MAXIMUM_BRIGHTNESS 255 // limits maximum brightness of LEDs
+
+//#define LED_MATRIX_STARTUP_MODE LED_MATRIX_BREATHING // Sets the default mode, if none has been set
+//#define LED_MATRIX_STARTUP_VAL LED_MATRIX_MAXIMUM_BRIGHTNESS/2 // Sets the default brightness value, if none has been set
+//#define LED_MATRIX_STARTUP_SPD 127
+/*위 3줄코드도잘 되는것 같은데?  */
+#define LED_MATRIX_DEFAULT_MODE LED_MATRIX_BREATHING             // Sets the default mode, if none has been set
+#define LED_MATRIX_DEFAULT_VAL 120  //LED_MATRIX_MAXIMUM_BRIGHTNESS / 2 // Sets the default brightness value, if none has been set
+#define LED_MATRIX_DEFAULT_SPD 127
+
+    // #define LED_MATRIX_CENTER {112, 32}
+
+    #define ENABLE_LED_MATRIX_ALPHAS_MODS
+    #define ENABLE_LED_MATRIX_BREATHING
+    #define ENABLE_LED_MATRIX_BAND
+    #define ENABLE_LED_MATRIX_BAND_PINWHEEL
+    #define ENABLE_LED_MATRIX_BAND_SPIRAL
+    #define ENABLE_LED_MATRIX_CYCLE_LEFT_RIGHT
+    #define ENABLE_LED_MATRIX_CYCLE_UP_DOWN
+    #define ENABLE_LED_MATRIX_CYCLE_OUT_IN
+    #define ENABLE_LED_MATRIX_DUAL_BEACON
+    #if defined(LED_MATRIX_KEYPRESSES)  // #if defined(LED_MATRIX_KEYREACTIVE_ENABLED)
+        #define ENABLE_LED_MATRIX_SOLID_REACTIVE_SIMPLE
+        #define ENABLE_LED_MATRIX_SOLID_REACTIVE_WIDE
+        #define ENABLE_LED_MATRIX_SOLID_REACTIVE_MULTIWIDE
+        #define ENABLE_LED_MATRIX_SOLID_REACTIVE_CROSS
+        #define ENABLE_LED_MATRIX_SOLID_REACTIVE_MULTICROSS
+        #define ENABLE_LED_MATRIX_SOLID_REACTIVE_NEXUS
+        #define ENABLE_LED_MATRIX_SOLID_REACTIVE_MULTINEXUS
+        #define ENABLE_LED_MATRIX_SPLASH
+        #define ENABLE_LED_MATRIX_MULTISPLASH
+    #endif
+    #define ENABLE_LED_MATRIX_WAVE_LEFT_RIGHT
+    #define ENABLE_LED_MATRIX_WAVE_UP_DOWN
+    #define ENABLE_LED_MATRIX_EFFECT_MAX
+#endif
 
 #ifdef OLED_ENABLE
 /*  OLED Configulation */
@@ -278,7 +358,7 @@
 //#define OLED_UPDATE_INTERVAL 33 // ~30fps
 #endif
 
-/* I2c for 072 */
+/* 아래 I2c관련 코드는 072 전용이였던건가?  아래 설정이 안되면 Program이 거의 멈춘듯..*/
 #define I2C_DRIVER I2CD1
 #define I2C1_SCL_PIN B6
 #define I2C1_SDA_PIN B7
