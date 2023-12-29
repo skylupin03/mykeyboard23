@@ -101,17 +101,6 @@ void keyboard_post_init_kb(void) {
 #ifdef RGB_MATRIX_ENABLE
 
 __attribute__ ((weak)) bool rgb_matrix_indicators_kb(void)  {
-    led_t host_leds = host_keyboard_led_state();
-
-    if (host_leds.caps_lock) { 
-        rgb_matrix_set_color(72, 0x20, 0x0, 0x20);            
-    }
-    if (host_leds.scroll_lock) {
-        rgb_matrix_set_color(22, 0x00, 0x20, 0x20);
-    }        
-    // if (host_keyboard_led_state().num_lock) {
-    //     rgb_matrix_set_color(59, 0x20, 0x20, 0x00);    
-    // }
 
     return rgb_matrix_indicators_user();
     return TRUE;

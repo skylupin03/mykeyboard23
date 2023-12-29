@@ -43,7 +43,7 @@
 #define BOOTMAGIC_LITE_COLUMN           7
 
 /* LED indicator pins */  
-#define LED_CAPS_LOCK_PIN   C9
+#define LED_CAPS_LOCK_PIN   C3      // C9
 #define LED_SCROLL_LOCK_PIN A8
 #define LED_NUM_LOCK_PIN    C8
 #define LED_WIN_LOCK_PIN    A9

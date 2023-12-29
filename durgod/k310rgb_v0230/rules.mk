@@ -68,4 +68,6 @@ OLED_ENABLE = yes			# +5568(0x15C0)byte
 #JOYSTICK_DRIVER = analog
 #SRC += analog.c
 
+#DEBOUNCE_TYPE = asym_eager_defer_pk		# asym_eager_defer_pk, sym_eager_pk, sym_eager_pr
+
 #SIGNALRGB_SUPPORT_ENABLE = yes

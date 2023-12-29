@@ -40,12 +40,15 @@ static bool     kvm_sel_on      = false;
 
 static bool isMacMode = false;
 
+static uint8_t Status_LED_Bright;       // maybe caps, scroll, PC1/2, win/mac, dynamic macro, win lock
+                                           // 0 = 초기값, 1~5 = 50~250의 5단계 밝기
 #define kvm_deadtime    100
 //------------------------------
 typedef union {
     uint32_t raw;
     struct {
-        bool     eeprom_kvm_pc_sel :1;
+        bool    eeprom_kvm_pc_sel :1;
+        uint8_t eeprom_Status_LED_Bright;       //
     };
 } user_config_t;
 
@@ -77,6 +80,7 @@ user_config_t user_config;
         KC_PC2,             // KM Switch PC2
         KC_TPC,             // KM Switch PC1<-->PC2 Toggle
         INIT_3S,            // EE_CLR(EEPROM CLear)(공장초기화)를 3초이상 눌러야 동작
+        KC_S_LED,            // Change Status LED Brightness
         NEW_SAFE_RANGE = SAFE_RANGE
 #else
     KC_TGUI = SAFE_RANGE,   // Toggle between GUI Lock or Unlock
@@ -99,6 +103,7 @@ KC_LOCK_SCREEN,         // MAC_key
     KC_PC2,                 // KM Switch PC2
     KC_TPC,                 // KM Switch PC1<-->PC2 Toggle
     INIT_3S,            // EE_CLR(EEPROM CLear)(공장초기화)를 3초이상 눌러야 동작    
+    KC_S_LED,            // Change Status LED Brightness
     NEW_SAFE_RANGE
 #endif
     };
@@ -165,18 +170,18 @@ void kvm_switch(bool pc_num){
 };
 
 void keyboard_pre_init_user(void) {
-    // kvm_pc_sel = 0;
-    // kvm_switch(kvm_pc_sel);
 };
 //------------------------------------------
 void keyboard_post_init_user(void) {
-    // Read the user config from EEPROM
-    // kvm_pc_sel = 0;
-    // kvm_switch(kvm_pc_sel);
 
-    user_config.raw = eeconfig_read_user();
+//  kvm_pc_sel = 0;      // alway PC1 fix
+
+    user_config.raw = eeconfig_read_user();                 // Read the user config from EEPROM
     kvm_pc_sel      = user_config.eeprom_kvm_pc_sel;
     kvm_switch(kvm_pc_sel);
+
+    Status_LED_Bright = user_config.eeprom_Status_LED_Bright;   // 0 = 초기값, 1~5 = 50~250의 5단계 밝기
+    if (Status_LED_Bright == 0) Status_LED_Bright = 5;
 }
 
 // void eeconfig_init_user(void) {  // EEPROM is getting reset!
@@ -240,11 +245,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
      [WIN_FN] = LAYOUT_all(/* Function Layer */
                                                                                                                                             KC_PC1, KC_PC2, RGB_MOD,
-        _______,  KC_BRID, KC_BRIU, KC_TASK, KC_FLXP,  KC_DIC, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_WHOM, KC_CALC,   KC_WSCH,  KC_TMODE,  KC_WBAK, KC_WFWD, KC_LOCK2, 
+        INIT_3S,  KC_BRID, KC_BRIU, KC_TASK, KC_FLXP,  KC_DIC, KC_MSEL, KC_MPRV, KC_MPLY, KC_MNXT, KC_WHOM, KC_CALC,   KC_WSCH,  KC_TMODE,  KC_WBAK, KC_WFWD, KC_LOCK2, 
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______,   NK_OFF,  NK_ON,   RGB_TOG,   RGB_SAI, RGB_HUI, RGB_MOD,      KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2,
-        _______, KC_BTN1, KC_MS_U, KC_BTN2, INIT_3S, _______, _______, _______, _______, _______, _______, _______, _______,  _______,    RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
-        _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______,                                   KC_MS_L, KC_BTN3, KC_MS_R,
-        _______, _______, KC_BTN4, KC_BTN3, KC_BTN5, _______, _______, _______, _______,  _______, _______, _______,           _______,            RGB_VAI,               KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D, 
+        _______, KC_BTN1, KC_MS_U, KC_BTN2, KC_WH_U, _______, _______, _______, _______, _______, _______, _______, _______,  _______,    RGB_SAD, RGB_HUD, RGB_RMOD,     KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U,
+        _______, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_D, _______, _______, _______, _______, _______, _______, _______, _______,   _______,                                   KC_MS_L, KC_BTN3, KC_MS_R,
+        _______, _______, KC_BTN4, KC_BTN3, KC_BTN5, _______, KC_S_LED, _______, _______,  _______, _______, _______,           _______,            RGB_VAI,               KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D, 
         _______, KC_TGUI, _______,                             _______,                            _______,_______, _______,    KC_TPC,   RGB_SPD, RGB_VAD, RGB_SPI,      KC_BTN1,       KC_BTN2),
 /*                 
                                         미션컨트롤 스포트라이트 딕테이션 Xdisturb                                                        LAUNCHPAD         lock-screen
@@ -262,11 +267,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [MAC_FN]   = LAYOUT_all(/* Layer 4 */
                                                                                                                                                                             KC_PC1, KC_PC2, RGB_MOD,
-        _______,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12, KC_TMODE,  KC_F13, KC_F14, KC_F15, 
+        INIT_3S,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12, KC_TMODE,  KC_F13, KC_F14, KC_F15, 
         DM_RSTP, DM_REC1, DM_REC2, DM_PLY1, DM_PLY2, _______, _______, _______, _______, _______, _______, NK_OFF,   NK_ON,  RGB_TOG,    RGB_SAI, RGB_HUI, RGB_MOD,     KC_CALC, KC_ACL0, KC_ACL1, KC_ACL2, 
-        _______, KC_BTN1, KC_MS_U, KC_BTN2, INIT_3S, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_SAD, RGB_HUD, RGB_RMOD,    KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U, 
-        _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                   KC_MS_L, KC_BTN3, KC_MS_R, 
-        _______, _______, KC_BTN4, KC_BTN3, KC_BTN5, _______, _______, _______, _______, _______, _______, _______,          _______,             RGB_VAI,              KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D,  
+        _______, KC_BTN1, KC_MS_U, KC_BTN2, KC_WH_U, _______, _______, _______, _______, _______, _______, _______, _______, _______,    RGB_SAD, RGB_HUD, RGB_RMOD,    KC_BTN4, KC_MS_U, KC_BTN5, KC_WH_U, 
+        _______, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_D, _______, _______, _______, _______, _______, _______, _______, _______, _______,                                   KC_MS_L, KC_BTN3, KC_MS_R, 
+        _______, _______, KC_BTN4, KC_BTN3, KC_BTN5, _______, KC_S_LED, _______, _______, _______, _______, _______,          _______,             RGB_VAI,              KC_WH_L, KC_MS_D, KC_WH_R, KC_WH_D,  
         _______, _______, KC_TGUI,                         _______,                               _______, _______, _______,  KC_TPC,    RGB_SPD, RGB_VAD, RGB_SPI,     KC_BTN1,       KC_BTN2)
         };
 
@@ -486,6 +491,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         writePinLow(LED_MR_LOCK_PIN);
                         set_single_persistent_default_layer(2);
                         isMacMode = true;                        
+
                         break;
                     case 2:
                     case 3:
@@ -558,6 +564,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             // else {
             //     return true;
             // }
+
+        case KC_S_LED:              // Change Status LED Brightness
+            if (record->event.pressed) { // Toggle GUI lock on key press
+                if (++Status_LED_Bright > 5) {
+                    Status_LED_Bright = 1;
+                };
+                user_config.eeprom_Status_LED_Bright = Status_LED_Bright; // 
+                eeconfig_update_user(user_config.raw); // Writes the new status to EEPROM 
+            }
+            return false;     
 
         case QK_BOOT:
             if (record->event.pressed) {
@@ -750,7 +766,21 @@ void leader_end_user(void){
 // __attribute__ ((weak)) 
 bool rgb_matrix_indicators_user(void)  {
 
+    uint8_t Status_LED_Bright_value = Status_LED_Bright * 50;
+
     uint8_t layer = get_highest_layer(layer_state|default_layer_state);
+
+    led_t host_leds = host_keyboard_led_state();
+
+    if (host_leds.caps_lock) { 
+        rgb_matrix_set_color(72, Status_LED_Bright_value, Status_LED_Bright_value, Status_LED_Bright_value);                     // 0X20            
+    }
+    if (host_leds.scroll_lock) {
+        rgb_matrix_set_color(22, Status_LED_Bright_value, Status_LED_Bright_value, Status_LED_Bright_value);       // 0X20
+    }        
+    // if (host_keyboard_led_state().num_lock) {
+    //     rgb_matrix_set_color(59, Status_LED_Bright_value, Status_LED_Bright_value, Status_LED_Bright_value);    
+    // }
 
     if (INIT3S_led_on == true){
         rgb_matrix_set_color_all(0xff, 0, 0);
@@ -759,23 +789,22 @@ bool rgb_matrix_indicators_user(void)  {
             // soft_reset_keyboard();        
     }
 
-
     if (isWinLock){         // WIN key Lock LED Blink
-        if(timer_elapsed(WinLock_timer) > 1000){
-            isWinLockLedOn = !isWinLockLedOn;
-            WinLock_timer  = timer_read();
-        }
-        if (isWinLockLedOn) {
-            if (isMacMode) rgb_matrix_set_color(100, 0x40, 0, 0);
-            else  rgb_matrix_set_color(99, 0x40, 0, 0);
-        }
+        // if(timer_elapsed(WinLock_timer) > 1000){     // Blink기능 삭제
+        //     isWinLockLedOn = !isWinLockLedOn;
+        //     WinLock_timer  = timer_read();
+        // }
+        // if (isWinLockLedOn) {
+            if (isMacMode) rgb_matrix_set_color(100, Status_LED_Bright_value, Status_LED_Bright_value, Status_LED_Bright_value);
+            else  rgb_matrix_set_color(99, Status_LED_Bright_value, Status_LED_Bright_value, Status_LED_Bright_value);
+        // }
     }
 
     if (isRecordingLedOn) {                 // Dynamic Macro Recording LED Blink 
-        rgb_matrix_set_color(38, 0x40, 0x0, 0x40);            
+        rgb_matrix_set_color(38, Status_LED_Bright_value, Status_LED_Bright_value, Status_LED_Bright_value);            
     }
     if (bootloader_mode) { 
-        rgb_matrix_set_color(0, 0x40, 0x0, 0x40);            
+        rgb_matrix_set_color(0, Status_LED_Bright_value, 0x0, 0x0);            
     }
 
 
@@ -783,14 +812,14 @@ bool rgb_matrix_indicators_user(void)  {
     switch (layer) {
         case 0:
         case 1:
-            if (kvm_pc_sel)  rgb_matrix_set_color(103,0,0,40);
-            else            rgb_matrix_set_color(101,0,0,40);
+            if (kvm_pc_sel)  rgb_matrix_set_color(103,0,0,Status_LED_Bright_value);        // Windows Mode & PC2
+            else            rgb_matrix_set_color(101,0,0,Status_LED_Bright_value);        // Windows Mode & PC1
             break;   
 
         case 2:
         case 3:
-            if (kvm_pc_sel)  rgb_matrix_set_color(103,40,0,0);
-            else            rgb_matrix_set_color(101,40,0,0);
+            if (kvm_pc_sel)  rgb_matrix_set_color(103,Status_LED_Bright_value,0,0);      // MAC Mode & PC2
+            else            rgb_matrix_set_color(101,Status_LED_Bright_value,0,0);      // MAC Mode & PC2
             break;          
     }
     return TRUE;

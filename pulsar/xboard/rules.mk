@@ -59,4 +59,6 @@ ENCODER_MAP_ENABLE = yes
 #JOYSTICK_DRIVER = digital  # analog
 #SRC += analog.c
 
+#DEBOUNCE_TYPE = ym_eager_pk		# asym_eager_defer_pk, sym_eager_pk, sym_eager_pr
+
 #SIGNALRGB_SUPPORT_ENABLE = yes

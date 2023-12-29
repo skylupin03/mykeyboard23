@@ -145,26 +145,26 @@ void keyboard_post_init_kb(void) {
 #ifdef RGB_MATRIX_ENABLE
 
 __attribute__ ((weak)) bool rgb_matrix_indicators_kb(void)  {
-    led_t host_leds = host_keyboard_led_state();
+    // led_t host_leds = host_keyboard_led_state();
 
-    if (host_leds.caps_lock) { 
-        rgb_matrix_set_color(75, 0x20, 0x0, 0x20);           
-    }
-    if (host_leds.scroll_lock) {
-        rgb_matrix_set_color(14, 0x00, 0x20, 0x20);
-        // rgb_matrix_set_color(1, 0x00, 0x20, 0x20); rgb_matrix_set_color(2, 0x00, 0x20, 0x20); rgb_matrix_set_color(3, 0x00, 0x20, 0x20); rgb_matrix_set_color(4, 0x00, 0x20, 0x20); 
-        // rgb_matrix_set_color(5, 0x00, 0x20, 0x20); rgb_matrix_set_color(6, 0x00, 0x20, 0x20); rgb_matrix_set_color(7, 0x00, 0x20, 0x20); rgb_matrix_set_color(8, 0x00, 0x20, 0x20); 
-        // rgb_matrix_set_color(9, 0x00, 0x20, 0x20); rgb_matrix_set_color(10, 0x00, 0x20, 0x20); rgb_matrix_set_color(11, 0x00, 0x20, 0x20); rgb_matrix_set_color(12, 0x00, 0x20, 0x20); 
-    }        
-    if (host_keyboard_led_state().num_lock) {
-        rgb_matrix_set_color(19, 0x20, 0x20, 0x00);
-    }
-        if (host_leds.kana) {
-        rgb_matrix_set_color(13, 0x00, 0x20, 0x20);
-    }
-        if (host_leds.compose) {
-        rgb_matrix_set_color(15, 0x00, 0x20, 0x20);
-    }            
+    // if (host_leds.caps_lock) { 
+    //     rgb_matrix_set_color(75, 0x20, 0x0, 0x20);           
+    // }
+    // if (host_leds.scroll_lock) {
+    //     rgb_matrix_set_color(14, 0x00, 0x20, 0x20);
+    //     // rgb_matrix_set_color(1, 0x00, 0x20, 0x20); rgb_matrix_set_color(2, 0x00, 0x20, 0x20); rgb_matrix_set_color(3, 0x00, 0x20, 0x20); rgb_matrix_set_color(4, 0x00, 0x20, 0x20); 
+    //     // rgb_matrix_set_color(5, 0x00, 0x20, 0x20); rgb_matrix_set_color(6, 0x00, 0x20, 0x20); rgb_matrix_set_color(7, 0x00, 0x20, 0x20); rgb_matrix_set_color(8, 0x00, 0x20, 0x20); 
+    //     // rgb_matrix_set_color(9, 0x00, 0x20, 0x20); rgb_matrix_set_color(10, 0x00, 0x20, 0x20); rgb_matrix_set_color(11, 0x00, 0x20, 0x20); rgb_matrix_set_color(12, 0x00, 0x20, 0x20); 
+    // }        
+    // if (host_keyboard_led_state().num_lock) {
+    //     rgb_matrix_set_color(19, 0x20, 0x20, 0x00);
+    // }
+    //     if (host_leds.kana) {
+    //     rgb_matrix_set_color(13, 0x00, 0x20, 0x20);
+    // }
+    //     if (host_leds.compose) {
+    //     rgb_matrix_set_color(15, 0x00, 0x20, 0x20);
+    // }            
 
     // uint8_t layer = get_highest_layer(layer_state|default_layer_state);
     // switch (layer) {
